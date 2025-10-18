@@ -1,4 +1,29 @@
 /** @type {import('tailwindcss').Config} */
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'toyota-red': '#EB0A1E',
+        'toyota-black': '#000000',
+        'toyota-white': '#FFFFFF',
+        'toyota-gray': '#E5E5E5',
+      },
+      fontFamily: {
+        'toyota': ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
+=======
+>>>>>>> krish
 export default {
   darkMode: ["class"],
   content: [
@@ -102,4 +127,9 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 11dcf3b (Initial commit: MyToyota Smart Match prototype with premium UI)
+>>>>>>> krish
