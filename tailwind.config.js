@@ -1,26 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-<<<<<<< HEAD
-module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
-  ],
-  theme: {
-    extend: {
-      colors: {
-        'toyota-red': '#EB0A1E',
-        'toyota-black': '#000000',
-        'toyota-white': '#FFFFFF',
-        'toyota-gray': '#E5E5E5',
-      },
-      fontFamily: {
-        'toyota': ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
-      },
-    },
-  },
-  plugins: [],
-}
-=======
 export default {
   darkMode: ["class"],
   content: [
@@ -29,7 +7,6 @@ export default {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -40,52 +17,44 @@ export default {
     },
     extend: {
       colors: {
-        border: "var(--border)",
-        input: "var(--border)",
-        ring: "var(--accent)",
-        background: "var(--bg)",
-        foreground: "var(--text)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "var(--accent)",
-          foreground: "white",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "var(--surface)",
-          foreground: "var(--text)",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(210 40% 98%)",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "var(--surface)",
-          foreground: "var(--muted)",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "white",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--text)",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--text)",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius)",
-        sm: "calc(var(--radius) - 2px)",
-      },
-      fontFamily: {
-        sans: ["var(--font-sans)"],
-        display: ["var(--font-display)"],
-      },
-      boxShadow: {
-        'custom': 'var(--shadow)',
-        'custom-lg': 'var(--shadow-lg)',
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -96,33 +65,21 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "fade-up": {
-          "0%": {
-            opacity: "0",
-            transform: "translateY(24px)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateY(0)",
-          },
-        },
-        "float": {
-          "0%, 100%": {
-            transform: "translateY(0px)",
-          },
-          "50%": {
-            transform: "translateY(-10px)",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-up": "fade-up 0.6s ease-out",
-        "float": "float 3s ease-in-out infinite",
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['DM Sans', 'sans-serif'],
+      },
+      boxShadow: {
+        'custom': 'var(--shadow)',
+        'lg-custom': 'var(--shadow-lg)',
+        'intense-custom': 'var(--shadow-intense)',
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
 }
->>>>>>> 11dcf3b (Initial commit: MyToyota Smart Match prototype with premium UI)
