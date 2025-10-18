@@ -63,7 +63,7 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-10">
             <Link
-              to="/#vehicles"
+              to="/vehicles"
               className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
             >
               Vehicles
@@ -118,7 +118,7 @@ export function Navbar() {
           <div className="md:hidden absolute top-[68px] left-0 right-0 bg-white/98 backdrop-blur-sm border-b border-gray-200/50 shadow-lg shadow-black/5">
             <div className="px-4 py-6 space-y-4">
               <Link
-                to="/#vehicles"
+                to="/vehicles"
                 className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
