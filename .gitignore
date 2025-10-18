@@ -8,7 +8,7 @@ yarn-error.log*
 build/
 dist/
 
-# Environment variables
+# Environment variables (keep env.example for setup)
 .env
 .env.local
 .env.development
@@ -63,3 +63,10 @@ Thumbs.db
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Keep these files for your friend:
+# - env.example (template for environment setup)
+# - All source code files
+# - package.json and package-lock.json
+# - README.md
+# - All configuration files
