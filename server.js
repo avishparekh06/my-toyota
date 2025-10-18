@@ -11,14 +11,19 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://avishparekh06_db_user:X71yGDwWHyvAVdFf@toyota.hwjvpxh.mongodb.net/?retryWrites=true&w=majority&appName=toyota';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI environment variable is required');
+  process.exit(1);
+}
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-  bufferCommands: false, // Disable mongoose buffering
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  bufferCommands: false,
 });
 
 const db = mongoose.connection;
@@ -38,34 +43,14 @@ db.once('open', () => {
 // Routes
 app.use('/api/cars', require('./routes/cars'));
 
-// Health check endpoint
+// Health check endpoint for production monitoring
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'Server is running', 
     timestamp: new Date().toISOString(),
-    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    environment: process.env.NODE_ENV || 'development'
   });
-});
-
-// Test MongoDB connection endpoint
-app.get('/api/test-db', async (req, res) => {
-  try {
-    const Car = require('./models/Car');
-    const count = await Car.countDocuments();
-    res.json({ 
-      success: true, 
-      message: 'Database connection successful',
-      carCount: count,
-      connectionState: mongoose.connection.readyState
-    });
-  } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      error: 'Database connection failed',
-      message: error.message,
-      connectionState: mongoose.connection.readyState
-    });
-  }
 });
 
 app.listen(PORT, () => {
