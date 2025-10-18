@@ -1,0 +1,262 @@
+[
+  {
+    "_id": "user_001",
+    "name": "Ava Martinez",
+    "age": 28,
+    "familySize": 2,
+    "numberOfCarsOwned": 0,
+    "forWhom": "self",
+    "averageDrivingDistance": 120,
+    "commuteType": "city",
+    "location": {
+      "city": "Austin",
+      "state": "TX",
+      "zip": "73301"
+    },
+    "preferences": {
+      "bodyStyle": ["Sedan"],
+      "drivetrain": ["FWD"],
+      "fuelType": ["Hybrid"],
+      "colorPreference": "White",
+      "featurePreferences": ["Heated Seats", "Wireless CarPlay", "Safety Sense"]
+    },
+    "budget": {
+      "min": 30000,
+      "max": 40000,
+      "preferred": 35000
+    },
+    "financial": {
+      "annualIncome": 85000,
+      "downPayment": 5000,
+      "tradeInValue": 0,
+      "financingPreference": "Finance",
+      "termPreference": 60,
+      "creditScore": 720
+    },
+    "drivingHabits": {
+      "dailyMiles": 120,
+      "highwayPercentage": 20,
+      "cityPercentage": 80,
+      "cargoNeeds": "Low",
+      "passengerCount": 1,
+      "parkingType": "Street"
+    },
+    "lifestyle": {
+      "family": false,
+      "pets": false,
+      "outdoorActivities": false,
+      "commute": "Daily",
+      "weekendTrips": "Rare",
+      "purpose": "commute"
+    },
+    "preferredMakes": ["Toyota"]
+  },
+  {
+    "_id": "user_002",
+    "name": "Daniel Kim",
+    "age": 42,
+    "familySize": 4,
+    "numberOfCarsOwned": 1,
+    "forWhom": "family",
+    "averageDrivingDistance": 250,
+    "commuteType": "mixed",
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77007"
+    },
+    "preferences": {
+      "bodyStyle": ["SUV"],
+      "drivetrain": ["AWD"],
+      "fuelType": ["Hybrid"],
+      "colorPreference": "Blue",
+      "featurePreferences": ["Blind Spot Monitor", "Power Liftgate", "Captain's Chairs"]
+    },
+    "budget": {
+      "min": 40000,
+      "max": 55000,
+      "preferred": 47500
+    },
+    "financial": {
+      "annualIncome": 110000,
+      "downPayment": 7000,
+      "tradeInValue": 5000,
+      "financingPreference": "Lease",
+      "termPreference": 36,
+      "creditScore": 740
+    },
+    "drivingHabits": {
+      "dailyMiles": 250,
+      "highwayPercentage": 60,
+      "cityPercentage": 40,
+      "cargoNeeds": "High",
+      "passengerCount": 4,
+      "parkingType": "Garage"
+    },
+    "lifestyle": {
+      "family": true,
+      "pets": true,
+      "outdoorActivities": true,
+      "commute": "Daily",
+      "weekendTrips": "Frequent",
+      "purpose": "family use"
+    },
+    "preferredMakes": ["Toyota"]
+  },
+  {
+    "_id": "user_003",
+    "name": "Sophia Patel",
+    "age": 33,
+    "familySize": 1,
+    "numberOfCarsOwned": 1,
+    "forWhom": "self",
+    "averageDrivingDistance": 80,
+    "commuteType": "city",
+    "location": {
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75070"
+    },
+    "preferences": {
+      "bodyStyle": ["Sedan"],
+      "drivetrain": ["FWD"],
+      "fuelType": ["Gasoline"],
+      "colorPreference": "Silver",
+      "featurePreferences": ["Leather Seats", "Panoramic Roof", "JBL Audio"]
+    },
+    "budget": {
+      "min": 30000,
+      "max": 50000,
+      "preferred": 40000
+    },
+    "financial": {
+      "annualIncome": 95000,
+      "downPayment": 6000,
+      "tradeInValue": 3000,
+      "financingPreference": "Finance",
+      "termPreference": 48,
+      "creditScore": 710
+    },
+    "drivingHabits": {
+      "dailyMiles": 80,
+      "highwayPercentage": 30,
+      "cityPercentage": 70,
+      "cargoNeeds": "Low",
+      "passengerCount": 1,
+      "parkingType": "Garage"
+    },
+    "lifestyle": {
+      "family": false,
+      "pets": false,
+      "outdoorActivities": false,
+      "commute": "Daily",
+      "weekendTrips": "Occasional",
+      "purpose": "commute"
+    },
+    "preferredMakes": ["Toyota"]
+  },
+  {
+    "_id": "user_004",
+    "name": "Ethan Johnson",
+    "age": 50,
+    "familySize": 5,
+    "numberOfCarsOwned": 2,
+    "forWhom": "parents",
+    "averageDrivingDistance": 150,
+    "commuteType": "highway",
+    "location": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "zip": "90012"
+    },
+    "preferences": {
+      "bodyStyle": ["SUV"],
+      "drivetrain": ["4WD"],
+      "fuelType": ["Hybrid"],
+      "colorPreference": "Red",
+      "featurePreferences": ["Advanced Park Assist", "14-Inch Touchscreen", "JBL Audio"]
+    },
+    "budget": {
+      "min": 70000,
+      "max": 85000,
+      "preferred": 77500
+    },
+    "financial": {
+      "annualIncome": 150000,
+      "downPayment": 10000,
+      "tradeInValue": 8000,
+      "financingPreference": "Finance",
+      "termPreference": 60,
+      "creditScore": 760
+    },
+    "drivingHabits": {
+      "dailyMiles": 150,
+      "highwayPercentage": 70,
+      "cityPercentage": 30,
+      "cargoNeeds": "Very High",
+      "passengerCount": 5,
+      "parkingType": "Garage"
+    },
+    "lifestyle": {
+      "family": true,
+      "pets": true,
+      "outdoorActivities": true,
+      "commute": "Daily",
+      "weekendTrips": "Frequent",
+      "purpose": "family travel"
+    },
+    "preferredMakes": ["Toyota"]
+  },
+  {
+    "_id": "user_005",
+    "name": "Lily Chen",
+    "age": 24,
+    "familySize": 0,
+    "numberOfCarsOwned": 0,
+    "forWhom": "self",
+    "averageDrivingDistance": 60,
+    "commuteType": "city",
+    "location": {
+      "city": "Atlanta",
+      "state": "GA",
+      "zip": "30308"
+    },
+    "preferences": {
+      "bodyStyle": ["Coupe"],
+      "drivetrain": ["RWD"],
+      "fuelType": ["Gasoline"],
+      "colorPreference": "Blue",
+      "featurePreferences": ["Sport Seats", "Apple CarPlay", "Heated Seats"]
+    },
+    "budget": {
+      "min": 25000,
+      "max": 35000,
+      "preferred": 30000
+    },
+    "financial": {
+      "annualIncome": 65000,
+      "downPayment": 4000,
+      "tradeInValue": 0,
+      "financingPreference": "Lease",
+      "termPreference": 36,
+      "creditScore": 690
+    },
+    "drivingHabits": {
+      "dailyMiles": 60,
+      "highwayPercentage": 25,
+      "cityPercentage": 75,
+      "cargoNeeds": "Very Low",
+      "passengerCount": 1,
+      "parkingType": "Street"
+    },
+    "lifestyle": {
+      "family": false,
+      "pets": false,
+      "outdoorActivities": false,
+      "commute": "Daily",
+      "weekendTrips": "Occasional",
+      "purpose": "lifestyle"
+    },
+    "preferredMakes": ["Toyota"]
+  }
+]

@@ -1,0 +1,6 @@
+name,age,familySize,numberOfCarsOwned,forWhom,averageDrivingDistance,commuteType,city,state,zip,bodyStylePreference,drivetrainPreference,fuelTypePreference,colorPreference,featurePreferences,budgetMin,budgetMax,annualIncome,downPayment,tradeInValue,financingPreference,termPreference,creditScore,purpose,preferredMakes
+Ava Martinez,28,2,0,self,120,city,Austin,TX,73301,Sedan,FWD,Hybrid,White,"Heated Seats, Wireless CarPlay, Safety Sense",30000,40000,85000,5000,0,Finance,60,720,commute,Toyota
+Daniel Kim,42,4,1,family,250,mixed,Houston,TX,77007,SUV,AWD,Hybrid,Blue,"Blind Spot Monitor, Power Liftgate, Captain’s Chairs",40000,55000,110000,7000,5000,Lease,36,740,family use,Toyota
+Sophia Patel,33,1,1,self,80,city,Dallas,TX,75070,Sedan,FWD,Gasoline,Silver,"Leather Seats, Panoramic Roof, JBL Audio",30000,50000,95000,6000,3000,Finance,48,710,commute,Toyota
+Ethan Johnson,50,5,2,parents,150,highway,Los Angeles,CA,90012,SUV,4WD,Hybrid,Red,"Advanced Park Assist, 14-Inch Touchscreen, JBL Audio",70000,85000,150000,10000,8000,Finance,60,760,family travel,Toyota
+Lily Chen,24,0,0,self,60,city,Atlanta,GA,30308,Coupe,RWD,Gasoline,Blue,"Sport Seats, Apple CarPlay, Heated Seats",25000,35000,65000,4000,0,Lease,36,690,lifestyle,Toyota

@@ -1,0 +1,416 @@
+[
+  {
+    "vin": "1HGBH41JXMN109186",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Crown",
+    "trim": "Platinum",
+    "bodyStyle": "Sedan",
+    "engine": "2.5L 4-Cylinder Hybrid",
+    "horsepower": 236,
+    "drivetrain": "AWD",
+    "transmission": "CVT",
+    "fuelType": "Hybrid",
+    "mpgCity": 42,
+    "mpgHighway": 41,
+    "exteriorColor": "Midnight Black Metallic",
+    "interiorColor": "Black Leather",
+    "stockNumber": "TC24001",
+    "msrp": 54600,
+    "dealerPrice": 52000,
+    "features": ["Heated Seats", "Navigation", "Premium Audio", "Sunroof", "Blind Spot Monitor"],
+    "dimensions": {
+      "length": "196.1 in",
+      "width": "72.4 in",
+      "height": "60.6 in",
+      "wheelbase": "112.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701"
+    },
+    "dealership": {
+      "name": "Toyota of Austin",
+      "address": "123 Main St",
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701",
+      "phone": "(512) 555-0123"
+    },
+    "dateAdded": "2024-01-15T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109187",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "RAV4",
+    "trim": "XLE",
+    "bodyStyle": "SUV",
+    "engine": "2.5L 4-Cylinder",
+    "horsepower": 203,
+    "drivetrain": "FWD",
+    "transmission": "8-Speed Automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 28,
+    "mpgHighway": 35,
+    "exteriorColor": "Ruby Flare Pearl",
+    "interiorColor": "Black Fabric",
+    "stockNumber": "TR24002",
+    "msrp": 32800,
+    "dealerPrice": 31000,
+    "features": ["Apple CarPlay", "Android Auto", "Lane Departure Alert", "Pre-Collision System"],
+    "dimensions": {
+      "length": "180.9 in",
+      "width": "73.0 in",
+      "height": "67.2 in",
+      "wheelbase": "105.9 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400",
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400"
+    ],
+    "location": {
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75201"
+    },
+    "dealership": {
+      "name": "Toyota of Dallas",
+      "address": "456 Oak Ave",
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75201",
+      "phone": "(214) 555-0456"
+    },
+    "dateAdded": "2024-01-16T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109188",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Prius",
+    "trim": "LE",
+    "bodyStyle": "Hatchback",
+    "engine": "1.8L 4-Cylinder Hybrid",
+    "horsepower": 121,
+    "drivetrain": "FWD",
+    "transmission": "CVT",
+    "fuelType": "Hybrid",
+    "mpgCity": 58,
+    "mpgHighway": 53,
+    "exteriorColor": "Supersonic Red",
+    "interiorColor": "Black Fabric",
+    "stockNumber": "TP24003",
+    "msrp": 27545,
+    "dealerPrice": 26000,
+    "features": ["Toyota Safety Sense", "7-inch Touchscreen", "Bluetooth", "Backup Camera"],
+    "dimensions": {
+      "length": "180.0 in",
+      "width": "69.3 in",
+      "height": "58.1 in",
+      "wheelbase": "106.3 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001"
+    },
+    "dealership": {
+      "name": "Toyota of Houston",
+      "address": "789 Pine St",
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001",
+      "phone": "(713) 555-0789"
+    },
+    "dateAdded": "2024-01-17T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109189",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Tacoma",
+    "trim": "TRD Pro",
+    "bodyStyle": "Truck",
+    "engine": "3.5L V6",
+    "horsepower": 278,
+    "drivetrain": "4WD",
+    "transmission": "6-Speed Automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 18,
+    "mpgHighway": 22,
+    "exteriorColor": "Lunar Rock",
+    "interiorColor": "Black Leather",
+    "stockNumber": "TT24004",
+    "msrp": 48500,
+    "dealerPrice": 46000,
+    "features": ["TRD Suspension", "Skid Plates", "LED Headlights", "Premium Audio", "Navigation"],
+    "dimensions": {
+      "length": "212.3 in",
+      "width": "75.2 in",
+      "height": "70.6 in",
+      "wheelbase": "127.4 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "San Antonio",
+      "state": "TX",
+      "zip": "78201"
+    },
+    "dealership": {
+      "name": "Toyota of San Antonio",
+      "address": "321 Cedar Blvd",
+      "city": "San Antonio",
+      "state": "TX",
+      "zip": "78201",
+      "phone": "(210) 555-0321"
+    },
+    "dateAdded": "2024-01-18T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109190",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "bZ4X",
+    "trim": "XLE",
+    "bodyStyle": "SUV",
+    "engine": "Electric Motor",
+    "horsepower": 201,
+    "drivetrain": "FWD",
+    "transmission": "Single Speed",
+    "fuelType": "EV",
+    "mpgCity": 0,
+    "mpgHighway": 0,
+    "exteriorColor": "Elemental Silver Metallic",
+    "interiorColor": "Black Fabric",
+    "stockNumber": "TB24005",
+    "msrp": 42000,
+    "dealerPrice": 40000,
+    "features": ["12.3-inch Touchscreen", "Wireless Charging", "Panoramic Roof", "Toyota Safety Sense 3.0"],
+    "dimensions": {
+      "length": "184.6 in",
+      "width": "73.2 in",
+      "height": "65.0 in",
+      "wheelbase": "112.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701"
+    },
+    "dealership": {
+      "name": "Toyota of Austin",
+      "address": "123 Main St",
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701",
+      "phone": "(512) 555-0123"
+    },
+    "dateAdded": "2024-01-19T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109191",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Camry",
+    "trim": "XSE",
+    "bodyStyle": "Sedan",
+    "engine": "3.5L V6",
+    "horsepower": 301,
+    "drivetrain": "FWD",
+    "transmission": "8-Speed Automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 22,
+    "mpgHighway": 33,
+    "exteriorColor": "Midnight Black Metallic",
+    "interiorColor": "Red Leather",
+    "stockNumber": "TC24006",
+    "msrp": 35200,
+    "dealerPrice": 33000,
+    "features": ["Sport Tuned Suspension", "19-inch Alloy Wheels", "Heated Seats", "Premium Audio"],
+    "dimensions": {
+      "length": "192.1 in",
+      "width": "72.4 in",
+      "height": "56.9 in",
+      "wheelbase": "111.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75201"
+    },
+    "dealership": {
+      "name": "Toyota of Dallas",
+      "address": "456 Oak Ave",
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75201",
+      "phone": "(214) 555-0456"
+    },
+    "dateAdded": "2024-01-20T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109192",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Highlander",
+    "trim": "Hybrid Limited",
+    "bodyStyle": "SUV",
+    "engine": "2.5L 4-Cylinder Hybrid",
+    "horsepower": 243,
+    "drivetrain": "AWD",
+    "transmission": "CVT",
+    "fuelType": "Hybrid",
+    "mpgCity": 36,
+    "mpgHighway": 35,
+    "exteriorColor": "Blizzard Pearl",
+    "interiorColor": "Black Leather",
+    "stockNumber": "TH24007",
+    "msrp": 48500,
+    "dealerPrice": 46000,
+    "features": ["Third Row Seating", "Panoramic Sunroof", "JBL Audio", "Navigation", "Heated Steering Wheel"],
+    "dimensions": {
+      "length": "194.9 in",
+      "width": "75.8 in",
+      "height": "68.1 in",
+      "wheelbase": "112.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001"
+    },
+    "dealership": {
+      "name": "Toyota of Houston",
+      "address": "789 Pine St",
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001",
+      "phone": "(713) 555-0789"
+    },
+    "dateAdded": "2024-01-21T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109193",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "GR Supra",
+    "trim": "3.0 Premium",
+    "bodyStyle": "Coupe",
+    "engine": "3.0L Turbo Inline-6",
+    "horsepower": 382,
+    "drivetrain": "RWD",
+    "transmission": "8-Speed Automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 22,
+    "mpgHighway": 30,
+    "exteriorColor": "Renaissance Red 2.0",
+    "interiorColor": "Black Leather",
+    "stockNumber": "TS24008",
+    "msrp": 54900,
+    "dealerPrice": 52000,
+    "features": ["Adaptive Suspension", "Brembo Brakes", "Active Differential", "Premium Audio", "Navigation"],
+    "dimensions": {
+      "length": "172.5 in",
+      "width": "73.0 in",
+      "height": "50.9 in",
+      "wheelbase": "97.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "San Antonio",
+      "state": "TX",
+      "zip": "78201"
+    },
+    "dealership": {
+      "name": "Toyota of San Antonio",
+      "address": "321 Cedar Blvd",
+      "city": "San Antonio",
+      "state": "TX",
+      "zip": "78201",
+      "phone": "(210) 555-0321"
+    },
+    "dateAdded": "2024-01-22T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109194",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Sienna",
+    "trim": "XLE",
+    "bodyStyle": "Minivan",
+    "engine": "2.5L 4-Cylinder Hybrid",
+    "horsepower": 245,
+    "drivetrain": "FWD",
+    "transmission": "CVT",
+    "fuelType": "Hybrid",
+    "mpgCity": 36,
+    "mpgHighway": 36,
+    "exteriorColor": "Silver Metallic",
+    "interiorColor": "Black Fabric",
+    "stockNumber": "TS24009",
+    "msrp": 41500,
+    "dealerPrice": 39000,
+    "features": ["Sliding Doors", "Third Row Seating", "Toyota Safety Sense", "Bluetooth", "USB Ports"],
+    "dimensions": {
+      "length": "203.7 in",
+      "width": "78.5 in",
+      "height": "68.9 in",
+      "wheelbase": "120.5 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701"
+    },
+    "dealership": {
+      "name": "Toyota of Austin",
+      "address": "123 Main St",
+      "city": "Austin",
+      "state": "TX",
+      "zip": "78701",
+      "phone": "(512) 555-0123"
+    },
+    "dateAdded": "2024-01-23T00:00:00.000Z"
+  }
+]
