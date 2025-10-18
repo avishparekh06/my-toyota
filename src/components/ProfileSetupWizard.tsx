@@ -399,7 +399,7 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
                 >
                   <option value="">Select priority</option>
-                  <option value="Downpayment">Downpayment</option>
+                  <option value="Downpayment">Low Down Payment</option>
                   <option value="Low interest rates">Low interest rates</option>
                   <option value="Short financing period">Short financing period</option>
                 </select>
