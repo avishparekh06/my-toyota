@@ -1,20 +1,58 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
-interface VehicleCardProps {
-  vehicle: {
-    id: string
-    year: number
-    name: string
-    price: number
-    asShown: number
-    badge?: string
+interface Car {
+  _id: string
+  vin: string
+  year: number
+  make: string
+  model: string
+  trim: string
+  bodyStyle: string
+  engine: string
+  horsepower: number
+  drivetrain: string
+  transmission: string
+  fuelType: string
+  mpgCity: number
+  mpgHighway: number
+  exteriorColor: string
+  interiorColor: string
+  stockNumber: string
+  msrp: number
+  dealerPrice: number
+  features: string[]
+  dimensions: {
+    length: string
+    width: string
+    height: string
+    wheelbase: string
   }
+  status: string
+  images: string[]
+  location: {
+    city: string
+    state: string
+    zip: string
+  }
+  dealership: {
+    name: string
+    address: string
+    city: string
+    state: string
+    zip: string
+    phone: string
+  }
+  dateAdded: string
+}
+
+interface VehicleCardProps {
+  car: Car
   className?: string
 }
 
-export function VehicleCard({ vehicle, className }: VehicleCardProps) {
-  const [selectedYear, setSelectedYear] = useState(vehicle.year)
+export function VehicleCard({ car, className }: VehicleCardProps) {
+  const [selectedYear, setSelectedYear] = useState(car.year)
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -23,6 +61,17 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price)
+  }
+
+  const getBadge = () => {
+    if (car.fuelType === 'Hybrid') return 'Hybrid'
+    if (car.fuelType === 'Electric') return 'Electric'
+    if (car.drivetrain === 'AWD' || car.drivetrain === '4WD') return 'AWD'
+    return null
+  }
+
+  const getVehicleName = () => {
+    return `${car.year} ${car.make} ${car.model} ${car.trim}`
   }
 
   return (
@@ -36,26 +85,26 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
       <div className="px-4 pt-4 pb-2">
         <div className="flex space-x-1 bg-gray-100 rounded-md p-1">
           <button
-            onClick={() => setSelectedYear(2026)}
+            onClick={() => setSelectedYear(car.year)}
             className={cn(
               "flex-1 px-3 py-1.5 text-sm font-medium rounded transition-colors duration-200",
-              selectedYear === 2026
+              selectedYear === car.year
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
-            2026
+            {car.year}
           </button>
           <button
-            onClick={() => setSelectedYear(2025)}
+            onClick={() => setSelectedYear(car.year + 1)}
             className={cn(
               "flex-1 px-3 py-1.5 text-sm font-medium rounded transition-colors duration-200",
-              selectedYear === 2025
+              selectedYear === car.year + 1
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
-            2025
+            {car.year + 1}
           </button>
         </div>
       </div>
@@ -63,15 +112,33 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
       {/* Vehicle Name */}
       <div className="px-4 pb-2">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-          {vehicle.name}
+          {getVehicleName()}
         </h3>
         
         {/* Badge */}
-        {vehicle.badge && (
+        {getBadge() && (
           <span className="inline-block px-2 py-1 text-xs font-medium text-[#EB0A1E] bg-red-50 rounded-full">
-            {vehicle.badge}
+            {getBadge()}
           </span>
         )}
+      </div>
+
+      {/* Vehicle Details */}
+      <div className="px-4 pb-2">
+        <div className="text-sm text-gray-600 space-y-1">
+          <div className="flex justify-between">
+            <span>Body Style:</span>
+            <span className="font-medium">{car.bodyStyle}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Engine:</span>
+            <span className="font-medium">{car.engine}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>MPG:</span>
+            <span className="font-medium">{car.mpgCity}/{car.mpgHighway}</span>
+          </div>
+        </div>
       </div>
 
       {/* Pricing */}
@@ -80,11 +147,11 @@ export function VehicleCard({ vehicle, className }: VehicleCardProps) {
           <div className="flex items-baseline space-x-2">
             <span className="text-sm text-gray-600">Starting MSRP</span>
             <span className="text-2xl font-bold text-gray-900">
-              {formatPrice(vehicle.price)}
+              {formatPrice(car.msrp)}
             </span>
           </div>
           <div className="text-sm text-gray-500">
-            as shown {formatPrice(vehicle.asShown)}
+            as shown {formatPrice(car.dealerPrice)}
           </div>
         </div>
       </div>
