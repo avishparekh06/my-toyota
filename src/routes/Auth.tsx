@@ -66,7 +66,7 @@ export function AuthPage() {
       setIsSubmitting(true)
       clearError()
       await login(loginData.email, loginData.password)
-      navigate("/")
+      navigate("/profile")
     } catch (error) {
       // Error is handled by the auth context
       console.error('Login error:', error)
@@ -99,7 +99,7 @@ export function AuthPage() {
         email: signupData.email,
         password: signupData.password,
       })
-      navigate("/")
+      navigate("/profile")
     } catch (error) {
       // Error is handled by the auth context
       console.error('Registration error:', error)

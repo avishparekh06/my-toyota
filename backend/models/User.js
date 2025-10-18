@@ -37,6 +37,57 @@ const userSchema = new mongoose.Schema({
     state: { type: String, trim: true },
     country: { type: String, trim: true, default: 'USA' }
   },
+  // New nested objects for personal and financial information
+  personal: {
+    familyInfo: {
+      type: Number
+    },
+    avgCommuteDistance: {
+      type: Number
+    },
+    location: {
+      type: String
+    },
+    featurePreferences: [{
+      type: String
+    }],
+    buildPreferences: [{
+      type: String
+    }],
+    modelPreferences: [{
+      type: String
+    }],
+    fuelType: {
+      type: String
+    },
+    color: {
+      type: String
+    },
+    year: {
+      type: Number
+    },
+    buyingFor: {
+      type: String
+    }
+  },
+  finance: {
+    householdIncome: {
+      type: Number
+    },
+    creditScore: {
+      type: Number
+    },
+    financeOrLease: {
+      type: String
+    },
+    employmentStatus: {
+      type: String
+    },
+    financingPriorities: [{
+      type: String
+    }]
+  },
+  // Keep existing fields for backward compatibility
   employmentStatus: {
     type: String,
     enum: ['Employed', 'Self-Employed', 'Unemployed', 'Retired', 'Student'],

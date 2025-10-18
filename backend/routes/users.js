@@ -385,4 +385,71 @@ router.post('/simulations', authenticateToken, async (req, res) => {
   }
 });
 
+// PUT /api/users/:id - Update user personal and finance data (protected route)
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { personal, finance } = req.body;
+
+    // Verify the user is updating their own data or has admin privileges
+    if (req.user.userId !== id) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. You can only update your own data.'
+      });
+    }
+
+    // Find the user
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    // Prepare update object
+    const updateData = {};
+
+    // Update personal data if provided
+    if (personal) {
+      updateData.personal = { ...user.personal, ...personal };
+    }
+
+    // Update finance data if provided
+    if (finance) {
+      updateData.finance = { ...user.finance, ...finance };
+    }
+
+    // Update the user
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      success: true,
+      data: updatedUser.getPublicProfile(),
+      message: 'User data updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        details: Object.values(error.errors).map(err => err.message)
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update user data',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PrimaryButton } from "@/components/PrimaryButton"
 import { Container } from "@/components/Container"
 import { ProfileIcon } from "@/components/Icon"
+import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
 
 // Try to import Toyota logo, fallback to text
@@ -18,6 +19,7 @@ try {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isAuthenticated, user, logout } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,7 +39,7 @@ export function Navbar() {
       <Container>
         <div className="flex h-full items-center justify-between">
           {/* Toyota Logo + MyToyota */}
-          <Link to="/" className="flex items-center space-x-4 pl-2" aria-label="MyToyota Home">
+          <div className="flex items-center space-x-4 pl-2">
             {/* Official Toyota Logo */}
             <div className="flex items-center space-x-3">
               {/* Red Square with White Emblem */}
@@ -58,7 +60,7 @@ export function Navbar() {
             <span className="font-semibold text-xl tracking-tight text-[var(--accent)]">
               MyToyota
             </span>
-          </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-10">
@@ -90,19 +92,41 @@ export function Navbar() {
 
           {/* Right Side - Desktop */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
-              <ProfileIcon className="text-gray-700" />
-            </button>
-            <Link to="/auth">
-              <Button variant="ghost" size="sm" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                Log in
-              </Button>
-            </Link>
-            <Link to="/auth">
-              <PrimaryButton size="sm" className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
-                Create account
-              </PrimaryButton>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm" className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-2">
+                    <User className="h-4 w-4" />
+                    <span>{user?.firstName}</span>
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={logout}
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
+                  <ProfileIcon className="text-gray-700" />
+                </button>
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+                    Log in
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <PrimaryButton size="sm" className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
+                    Create account
+                  </PrimaryButton>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -152,16 +176,40 @@ export function Navbar() {
                 Owners
               </Link>
               <div className="pt-4 border-t border-[var(--border)] space-y-3">
-                <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start">
-                    Log in
-                  </Button>
-                </Link>
-                <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                  <PrimaryButton className="w-full rounded-full">
-                    Create account
-                  </PrimaryButton>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>Profile ({user?.firstName})</span>
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start flex items-center space-x-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Log in
+                      </Button>
+                    </Link>
+                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                      <PrimaryButton className="w-full rounded-full">
+                        Create account
+                      </PrimaryButton>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

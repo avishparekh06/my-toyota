@@ -13,6 +13,25 @@ export interface User {
     state: string;
     country: string;
   };
+  personal?: {
+    familyInfo?: number;
+    avgCommuteDistance?: number;
+    location?: string;
+    featurePreferences?: string[];
+    buildPreferences?: string[];
+    modelPreferences?: string[];
+    fuelType?: 'EV' | 'Gas' | 'Hybrid';
+    color?: string;
+    year?: number;
+    buyingFor?: string;
+  };
+  finance?: {
+    householdIncome?: number;
+    creditScore?: number;
+    financeOrLease?: 'Finance' | 'Lease';
+    employmentStatus?: 'Employed' | 'Self-Employed' | 'Unemployed' | 'Retired' | 'Student';
+    financingPriorities?: string[];
+  };
   employmentStatus?: string;
   annualIncome?: number;
   creditScore?: number;
@@ -164,6 +183,14 @@ export const authApi = {
     return apiRequest<{ success: boolean; data: User; message: string }>('/users/profile', {
       method: 'PUT',
       body: JSON.stringify(userData),
+    });
+  },
+
+  // Update user personal and finance data
+  updateUserData: async (userId: string, data: { personal?: Partial<User['personal']>; finance?: Partial<User['finance']> }): Promise<{ success: boolean; data: User; message: string }> => {
+    return apiRequest<{ success: boolean; data: User; message: string }>(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
     });
   },
 
