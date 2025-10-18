@@ -9,6 +9,7 @@ import { HeroSlideshow } from "@/components/HeroSlideshow"
 import { PrimaryButton } from "@/components/PrimaryButton"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { AuthTest } from "@/components/AuthTest"
 
 const heroImages = [
   { src: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1920&h=1080&fit=crop', alt: 'RAV4 on coastal road' },
@@ -147,6 +148,13 @@ export function LandingPage() {
               Prototype UI — figures are illustrative only.
             </p>
           </motion.div>
+        </Container>
+      </section>
+
+      {/* Temporary Auth Test Component */}
+      <section className="py-16 bg-gray-50">
+        <Container>
+          <AuthTest />
         </Container>
       </section>
 

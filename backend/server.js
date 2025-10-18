@@ -37,6 +37,7 @@ db.once('open', () => {
 
 // Routes
 app.use('/api/cars', require('./routes/cars'));
+app.use('/api/users', require('./routes/users'));
 
 // Health check endpoint for production monitoring
 app.get('/api/health', (req, res) => {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Link, useNavigate } from "react-router-dom"
-import { Apple, Mail } from "lucide-react"
+import { Apple, Mail, Loader2 } from "lucide-react"
 import { Navbar } from "@/components/Navbar"
 import { Container } from "@/components/Container"
 import { PrimaryButton } from "@/components/PrimaryButton"
@@ -10,10 +10,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useAuth } from "@/contexts/AuthContext"
 
 // Try to import Toyota logo
 let ToyotaLogo: React.ComponentType<{ className?: string }> | null = null
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   ToyotaLogo = require("@/assets/toyota-logo.svg").default
 } catch {
   // Logo not found, will use text fallback
@@ -36,9 +38,17 @@ const carouselSlides = [
 
 export function AuthPage() {
   const navigate = useNavigate()
+  const { login, register, error, clearError } = useAuth()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loginData, setLoginData] = useState({ email: "", password: "" })
-  const [signupData, setSignupData] = useState({ name: "", email: "", password: "", terms: false })
+  const [signupData, setSignupData] = useState({ 
+    firstName: "", 
+    lastName: "", 
+    email: "", 
+    password: "", 
+    terms: false 
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Auto-play carousel
   useEffect(() => {
@@ -48,20 +58,54 @@ export function AuthPage() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert("Demo only - Login successful!")
-    navigate("/")
+    if (isSubmitting) return
+    
+    try {
+      setIsSubmitting(true)
+      clearError()
+      await login(loginData.email, loginData.password)
+      navigate("/")
+    } catch (error) {
+      // Error is handled by the auth context
+      console.error('Login error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSubmitting) return
+    
     if (!signupData.terms) {
       alert("Please accept the terms and conditions")
       return
     }
-    alert("Demo only - Account created!")
-    navigate("/")
+
+    try {
+      setIsSubmitting(true)
+      clearError()
+      
+      // Split full name into first and last name
+      const nameParts = signupData.firstName.trim().split(' ')
+      const firstName = nameParts[0]
+      const lastName = nameParts.slice(1).join(' ') || ''
+      
+      await register({
+        firstName,
+        lastName,
+        email: signupData.email,
+        password: signupData.password,
+      })
+      navigate("/")
+    } catch (error) {
+      // Error is handled by the auth context
+      console.error('Registration error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -153,6 +197,13 @@ export function AuthPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {/* Error Display */}
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-sm text-red-600">{error}</p>
+                    </div>
+                  )}
+                  
                   <TooltipProvider>
                     <Tabs defaultValue="signup" className="w-full">
                       <TabsList className="grid w-full grid-cols-2 bg-[var(--surface)]">
@@ -200,8 +251,19 @@ export function AuthPage() {
                               required
                             />
                           </div>
-                          <PrimaryButton type="submit" className="w-full">
-                            Continue
+                          <PrimaryButton 
+                            type="submit" 
+                            className="w-full" 
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Signing in...
+                              </>
+                            ) : (
+                              'Continue'
+                            )}
                           </PrimaryButton>
                         </form>
                       </TabsContent>
@@ -216,8 +278,8 @@ export function AuthPage() {
                               id="signup-name"
                               type="text"
                               placeholder="Enter your full name"
-                              value={signupData.name}
-                              onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                              value={signupData.firstName}
+                              onChange={(e) => setSignupData({ ...signupData, firstName: e.target.value })}
                               className="border-[var(--border)] focus:ring-2 focus:ring-[var(--accent)] focus:border-[var(--accent)]"
                               required
                             />
@@ -269,8 +331,19 @@ export function AuthPage() {
                               </Link>
                             </label>
                           </div>
-                          <PrimaryButton type="submit" className="w-full">
-                            Create account
+                          <PrimaryButton 
+                            type="submit" 
+                            className="w-full"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Creating account...
+                              </>
+                            ) : (
+                              'Create account'
+                            )}
                           </PrimaryButton>
                         </form>
                       </TabsContent>
