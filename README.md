@@ -48,37 +48,46 @@ A modern, responsive web application for finding Toyota leases and financial opt
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+### Quick Setup (Recommended)
 ```bash
+# 1. Clone the repository
 git clone https://github.com/yourusername/find-my-toyota.git
 cd find-my-toyota
-```
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+# 2. Run the setup script (Mac/Linux)
+./setup.sh
 
-### 3. Environment Setup
-```bash
-# Copy the example environment file
-cp env.example .env
-
-# Edit .env with your MongoDB connection string
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/MyToyota?retryWrites=true&w=majority&appName=toyota
-PORT=5000
-NODE_ENV=development
-```
-
-### 4. Run the Application
-```bash
-# Start both frontend and backend
+# 3. Start the application
 npm run dev
 ```
 
-This will start:
+### Manual Setup
+```bash
+# 1. Clone the repository
+git clone https://github.com/yourusername/find-my-toyota.git
+cd find-my-toyota
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the application
+npm run dev
+```
+
+### What You'll Get
 - **Frontend**: http://localhost:3000 (React app)
 - **Backend**: http://localhost:5000 (Express API)
+
+### Prerequisites
+- Node.js (version 16 or higher) - [Download here](https://nodejs.org/)
+- npm (comes with Node.js)
+
+### Troubleshooting
+If you get any errors:
+1. Make sure Node.js is installed: `node --version`
+2. Make sure npm is installed: `npm --version`
+3. Try deleting `node_modules` and running `npm install` again
+4. Check that ports 3000 and 5000 are not in use by other applications
 
 ## 🌐 API Endpoints
 
