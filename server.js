@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
@@ -27,7 +27,7 @@ db.on('error', (error) => {
 });
 db.on('connected', () => {
   console.log('Connected to MongoDB successfully');
-});
+}); // Add the missing closing parenthesis
 db.on('disconnected', () => {
   console.log('MongoDB disconnected');
 });
