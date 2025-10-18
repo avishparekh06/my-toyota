@@ -264,7 +264,7 @@ const ProfileDisplay: React.FC = () => {
                     <div className="border-t border-[var(--border)] pt-4">
                       <p className="text-sm text-[var(--muted)] mb-2">Financing Priority</p>
                       <span className="bg-[var(--accent)]/10 text-[var(--accent)] px-3 py-1 rounded-full text-sm font-medium">
-                        {finance.financingPriorities[0]}
+                        {finance.financingPriorities[0] === 'Downpayment' ? 'Low Down Payment' : finance.financingPriorities[0]}
                       </span>
                     </div>
                   )}
