@@ -121,7 +121,7 @@ carSchema.pre('save', function(next) {
 
 // Create index for better search performance
 carSchema.index({ make: 1, model: 1, year: 1 });
-carSchema.index({ bodyType: 1 });
-carSchema.index({ price: 1 });
+carSchema.index({ bodyStyle: 1 });
+carSchema.index({ msrp: 1 });
 
 module.exports = mongoose.model('Car', carSchema, 'car-data');

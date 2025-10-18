@@ -27,7 +27,7 @@ db.on('error', (error) => {
 });
 db.on('connected', () => {
   console.log('Connected to MongoDB successfully');
-}); // Add the missing closing parenthesis
+});
 db.on('disconnected', () => {
   console.log('MongoDB disconnected');
 });
