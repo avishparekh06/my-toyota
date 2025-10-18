@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import './lib/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-[var(--border)];
+  }
+  
+  body {
+    @apply bg-[var(--bg)] text-[var(--text)] font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  
+  @media (min-width: 768px) {
+    body {
+      font-size: 18px;
+    }
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold;
+    line-height: 1.3;
+  }
+}
+
+@layer components {
+  .toyota-card {
+    @apply rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow)];
+  }
+  
+  .toyota-button {
+    @apply bg-[var(--accent)] text-white hover:bg-[var(--accent-600)] focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 transition-colors duration-200;
+  }
+  
+  .toyota-surface {
+    @apply bg-[var(--surface)];
+  }
+  
+  .toyota-text-muted {
+    @apply text-[var(--muted)];
+  }
+  
+  .toyota-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Toyota.com-style animations */
+@keyframes toyota-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toyota-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-toyota-fade-up {
+  animation: toyota-fade-up 0.4s ease-out;
+}
+
+.animate-toyota-scale {
+  animation: toyota-scale 0.3s ease-out;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-toyota-fade-up,
+  .animate-toyota-scale {
+    animation: none;
+  }
+}
