@@ -164,7 +164,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 pt-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

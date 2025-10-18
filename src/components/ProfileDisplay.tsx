@@ -79,7 +79,7 @@ const ProfileDisplay: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg)', position: 'relative' }}>
-      <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '24px', position: 'relative', zIndex: 0 }}>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '24px', paddingTop: '100px', position: 'relative', zIndex: 0 }}>
         {/* Header - Simple test */}
         <div style={{
           background: 'linear-gradient(to right, #EB0A1E, #CF0A19)',
