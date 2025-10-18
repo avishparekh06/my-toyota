@@ -1,4 +1,5 @@
 import React from 'react';
+import toyotaLogo from '../assets/images/logos/toyota-logo.png';
 
 const NavBar = () => {
   return (
@@ -7,12 +8,13 @@ const NavBar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Toyota Logo */}
           <div className="flex-shrink-0">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-toyota-red rounded-full flex items-center justify-center">
-                <span className="text-toyota-white font-bold text-xl">T</span>
-              </div>
-              <span className="ml-3 text-toyota-black font-bold text-xl">TOYOTA</span>
-            </div>
+            <a href="/" className="flex items-center hover:opacity-80 transition-opacity duration-200">
+              <img 
+                src={toyotaLogo} 
+                alt="Toyota Logo" 
+                className="h-16 w-auto"
+              />
+            </a>
           </div>
 
           {/* Navigation Links */}
