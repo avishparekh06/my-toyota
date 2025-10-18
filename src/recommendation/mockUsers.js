@@ -1,5 +1,5 @@
-// Mock user dataset imported from JSON for MongoDB compatibility
-import usersData from './users.json' with { type: 'json' };
+// Mock user dataset for MongoDB compatibility
+import usersData from './users.json';
 
 // Export the users data
 export const mockUsers = usersData;

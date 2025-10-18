@@ -137,12 +137,19 @@ export function LandingPage() {
             <p className="text-white/90 mb-8 max-w-2xl mx-auto text-lg">
               Join thousands of satisfied customers who found their perfect Toyota match.
             </p>
-            <Link to="/auth">
-              <Button size="lg" variant="secondary" className="bg-white text-[var(--accent)] hover:bg-white/90 px-8">
-                Get started now
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/recommendations">
+                <Button size="lg" variant="secondary" className="bg-white text-[var(--accent)] hover:bg-white/90 px-8">
+                  Get My Recommendations
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-[var(--accent)] px-8">
+                  Create Account
+                </Button>
+              </Link>
+            </div>
             <p className="text-white/70 text-sm mt-6">
               Prototype UI — figures are illustrative only.
             </p>

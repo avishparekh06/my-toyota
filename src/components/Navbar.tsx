@@ -69,6 +69,12 @@ export function Navbar() {
               Vehicles
             </Link>
             <Link
+              to="/recommendations"
+              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
+            >
+              Recommendations
+            </Link>
+            <Link
               to="/#shopping"
               className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
             >
@@ -123,6 +129,13 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Vehicles
+              </Link>
+              <Link
+                to="/recommendations"
+                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Recommendations
               </Link>
               <Link
                 to="/#shopping"

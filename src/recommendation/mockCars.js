@@ -1,5 +1,5 @@
-// Mock car dataset imported from JSON for MongoDB compatibility
-import carsData from './cars.json' with { type: 'json' };
+// Mock car dataset for MongoDB compatibility
+import carsData from './cars.json';
 
 // Export the cars data
 export const mockCars = carsData;
