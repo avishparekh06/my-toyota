@@ -22,7 +22,7 @@ def create_env_file():
         print("📝 Creating .env file...")
         with open('.env', 'w') as f:
             f.write("""# MongoDB Configuration
-MONGO_URI=mongodb+srv://avishparekh06_db_user:X71yGDwWHyvAVdFf@toyota.hwjvpxh.mongodb.net/MyToyota?retryWrites=true&w=majority
+MONGO_URI=your_mongodb_connection_string_here
 
 # Selenium Configuration
 HEADLESS_MODE=true

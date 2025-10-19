@@ -28,12 +28,21 @@ A pixel-perfect, responsive Toyota-inspired UI prototype built with React, TypeS
    npm install
    ```
 
-2. **Start development server:**
+2. **Set up environment variables:**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env with your actual API keys and database URLs
+   # See ENVIRONMENT_SETUP.md for detailed instructions
+   ```
+
+3. **Start development server:**
    ```bash
    npm run dev
    ```
 
-3. **Build for production:**
+4. **Build for production:**
    ```bash
    npm run build
    ```

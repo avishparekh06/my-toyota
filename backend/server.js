@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://avishparekh06_db_user:X71yGDwWHyvAVdFf@toyota.hwjvpxh.mongodb.net/MyToyota?retryWrites=true&w=majority&appName=toyota';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to MongoDB with error handling
 async function connectToMongoDB() {

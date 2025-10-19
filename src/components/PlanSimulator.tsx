@@ -441,10 +441,8 @@ const PlanSimulator: React.FC = () => {
           const result = await response.json();
           console.log('Plan saved successfully:', result);
           setFavoritedPlans(prev => new Set([...prev, plan.id]));
-          alert('Plan saved successfully!');
         } catch (jsonError) {
           console.error('Error parsing JSON response:', jsonError);
-          alert('Plan saved successfully! (Response received but couldn\'t parse JSON)');
           setFavoritedPlans(prev => new Set([...prev, plan.id]));
         }
       } else {

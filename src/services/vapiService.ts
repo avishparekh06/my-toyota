@@ -36,9 +36,9 @@ export interface VapiError {
 
 class VapiService {
   private readonly API_BASE_URL = 'https://api.vapi.ai';
-  private readonly API_KEY = '859aa1cc-7583-4e20-977c-76fe4eb7c31f';
-  private readonly ASSISTANT_ID = 'fdff7167-2070-47d0-a27d-246729b17134';
-  private readonly PHONE_NUMBER_ID = '6eebbff3-f997-4c27-89f2-7b82a16e18b7';
+  private readonly API_KEY = import.meta.env.VITE_VAPI_API_KEY || '859aa1cc-7583-4e20-977c-76fe4eb7c31f';
+  private readonly ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID || 'fdff7167-2070-47d0-a27d-246729b17134';
+  private readonly PHONE_NUMBER_ID = import.meta.env.VITE_VAPI_PHONE_NUMBER_ID || '6eebbff3-f997-4c27-89f2-7b82a16e18b7';
 
   /**
    * Initiates a voice call to a customer about a specific car

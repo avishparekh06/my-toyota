@@ -9,7 +9,7 @@ load_dotenv()
 
 class Config:
     # MongoDB Configuration
-    MONGO_URI = os.getenv('MONGO_URI', 'mongodb+srv://avishparekh06_db_user:X71yGDwWHyvAVdFf@toyota.hwjvpxh.mongodb.net/MyToyota?retryWrites=true&w=majority')
+    MONGO_URI = os.getenv('MONGO_URI')
     
     # Selenium Configuration
     HEADLESS_MODE = os.getenv('HEADLESS_MODE', 'true').lower() == 'true'
