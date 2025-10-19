@@ -527,7 +527,7 @@ const RecommendationPage = () => {
                     {/* Results Summary */}
                     {recommendationResult && (
                       <motion.div 
-                        className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6"
+                        className="bg-gradient-to-r from-[#EB0A1E]/10 to-gray-100 rounded-lg p-4 mb-6 border border-[#EB0A1E]/20"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
@@ -543,26 +543,26 @@ const RecommendationPage = () => {
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.4, delay: 1.2 }}
                           >
-                            <div className="text-2xl font-bold text-green-700">{recommendations.length}</div>
-                            <div className="text-sm text-green-600">Recommendations Found</div>
+                            <div className="text-2xl font-bold text-[#EB0A1E]">{recommendations.length}</div>
+                            <div className="text-sm text-gray-600">Recommendations Found</div>
                           </motion.div>
                           <motion.div
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.4, delay: 1.4 }}
                           >
-                            <div className="text-2xl font-bold text-blue-700">{recommendationResult.totalCarsAnalyzed}</div>
-                            <div className="text-sm text-blue-600">Cars Analyzed</div>
+                            <div className="text-2xl font-bold text-gray-700">{recommendationResult.totalCarsAnalyzed}</div>
+                            <div className="text-sm text-gray-600">Cars Analyzed</div>
                           </motion.div>
                           <motion.div
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.4, delay: 1.6 }}
                           >
-                            <div className="text-2xl font-bold text-purple-700">
+                            <div className="text-2xl font-bold text-[#EB0A1E]">
                               {recommendations.length > 0 ? Math.round(recommendations[0].similarityScore * 100) : 0}%
                             </div>
-                            <div className="text-sm text-purple-600">Best Match Score</div>
+                            <div className="text-sm text-gray-600">Best Match Score</div>
                           </motion.div>
                         </motion.div>
                         
