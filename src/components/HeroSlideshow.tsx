@@ -60,7 +60,7 @@ export function HeroSlideshow({ images }: HeroSlideshowProps) {
 
   return (
     <section 
-      className="relative min-h-screen overflow-hidden"
+      className="relative min-h-screen overflow-hidden pt-[68px]"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}

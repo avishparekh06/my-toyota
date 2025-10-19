@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { Gauge, ShieldCheck, GitCompare, ChevronRight } from "lucide-react"
-import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
 import { SectionHeader } from "@/components/SectionHeader"
@@ -43,8 +42,6 @@ const steps = [
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <Navbar />
-      
       {/* Hero Slideshow */}
       <HeroSlideshow images={heroImages} />
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { VehicleCard } from '@/components/VehicleCard'
+import { CarDetailModal } from '@/components/CarDetailModal'
 import { carsApi } from '@/services/api'
 
 interface Car {
@@ -62,6 +63,8 @@ export function VehiclesPage() {
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -85,9 +88,19 @@ export function VehiclesPage() {
     fetchCars()
   }, [])
 
+  const handleViewDetails = (car: Car) => {
+    setSelectedCar(car)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedCar(null)
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5]">
+      <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <h1 className="text-3xl font-bold text-gray-900">Vehicles</h1>
@@ -131,7 +144,7 @@ export function VehiclesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5]">
+      <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <h1 className="text-3xl font-bold text-gray-900">Vehicles</h1>
@@ -155,7 +168,7 @@ export function VehiclesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
+    <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -182,12 +195,19 @@ export function VehiclesPage() {
               <VehicleCard 
                 key={car._id} 
                 car={car}
-                className="h-fit"
+                onViewDetails={handleViewDetails}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Car Detail Modal */}
+      <CarDetailModal 
+        car={selectedCar}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }

@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import UserUpdateForm from '@/components/UserUpdateForm';
 import ProfileSetupWizard from '@/components/ProfileSetupWizard';
 import ProfileDisplay from '@/components/ProfileDisplay';
-import { Navbar } from '@/components/Navbar';
 import { Navigate } from 'react-router-dom';
 import { isProfileComplete } from '@/utils/profileUtils';
 
@@ -44,13 +43,14 @@ export const UserProfilePage: React.FC = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      {showWizard ? (
-        <ProfileSetupWizard onComplete={handleWizardComplete} />
-      ) : (
-        <ProfileDisplay key={user?.id || 'profile'} />
-      )}
-    </>
+    <div className="min-h-screen bg-[var(--bg)] pt-[68px]">
+      <div>
+        {showWizard ? (
+          <ProfileSetupWizard onComplete={handleWizardComplete} />
+        ) : (
+          <ProfileDisplay key={user?.id || 'profile'} />
+        )}
+      </div>
+    </div>
   );
 };
