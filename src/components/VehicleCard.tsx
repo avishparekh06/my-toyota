@@ -53,7 +53,7 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps) {
-  const [selectedYear, setSelectedYear] = useState(car.year)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -76,8 +76,22 @@ export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps)
   }
 
   const getCarImage = () => {
-    // Return the first image from the car's images array
-    return car.images && car.images.length > 0 ? car.images[0] : null
+    // Return the current image from the car's images array
+    return car.images && car.images.length > 0 ? car.images[currentImageIndex] : null
+  }
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (car.images && car.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % car.images.length)
+    }
+  }
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (car.images && car.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length)
+    }
   }
 
   const handleCardClick = () => {
@@ -132,37 +146,42 @@ export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps)
             </span>
           </div>
         )}
+
+        {/* Image Navigation Arrows */}
+        {car.images && car.images.length > 1 && (
+          <>
+            {/* Previous Image Arrow */}
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+              aria-label="Previous image"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Next Image Arrow */}
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+              aria-label="Next image"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+              {currentImageIndex + 1} / {car.images.length}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Card Content */}
       <div className="p-5 flex flex-col flex-grow">
-        {/* Year Selector Tabs */}
-        <div className="mb-4">
-          <div className="flex space-x-1 bg-gray-50 rounded-xl p-1">
-            <button
-              onClick={() => setSelectedYear(car.year)}
-              className={cn(
-                "flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                selectedYear === car.year
-                  ? "bg-white text-gray-900 shadow-sm border border-gray-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-              )}
-            >
-              {car.year}
-            </button>
-            <button
-              onClick={() => setSelectedYear(car.year + 1)}
-              className={cn(
-                "flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                selectedYear === car.year + 1
-                  ? "bg-white text-gray-900 shadow-sm border border-gray-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-              )}
-            >
-              {car.year + 1}
-            </button>
-          </div>
-        </div>
 
         {/* Vehicle Name */}
         <div className="mb-3">

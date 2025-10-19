@@ -147,6 +147,38 @@ export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
                   </span>
                 </div>
               )}
+
+              {/* Image Navigation Arrows */}
+              {car.images && car.images.length > 1 && (
+                <>
+                  {/* Previous Image Arrow */}
+                  <button
+                    onClick={() => setSelectedImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length)}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-200"
+                    aria-label="Previous image"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Next Image Arrow */}
+                  <button
+                    onClick={() => setSelectedImageIndex((prev) => (prev + 1) % car.images.length)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-200"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+
+                  {/* Image Counter */}
+                  <div className="absolute bottom-4 right-4 bg-black/50 text-white text-sm px-3 py-1 rounded-full">
+                    {selectedImageIndex + 1} / {car.images.length}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Image Thumbnails */}

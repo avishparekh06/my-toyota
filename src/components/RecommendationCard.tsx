@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Recommendation } from '@/types/recommendation'
@@ -14,6 +15,7 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
   const { carData: car } = recommendation;
   const navigate = useNavigate();
   const { setSelectedCar } = useCar();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -36,7 +38,21 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
   }
 
   const getCarImage = () => {
-    return car.images && car.images.length > 0 ? car.images[0] : null
+    return car.images && car.images.length > 0 ? car.images[currentImageIndex] : null
+  }
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (car.images && car.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % car.images.length)
+    }
+  }
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (car.images && car.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev - 1 + car.images.length) % car.images.length)
+    }
   }
 
   const getMatchScoreColor = (score: number) => {
@@ -126,6 +142,38 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
               #{rank}
             </div>
           </div>
+        )}
+
+        {/* Image Navigation Arrows */}
+        {car.images && car.images.length > 1 && (
+          <>
+            {/* Previous Image Arrow */}
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+              aria-label="Previous image"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Next Image Arrow */}
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+              aria-label="Next image"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+              {currentImageIndex + 1} / {car.images.length}
+            </div>
+          </>
         )}
       </div>
 
