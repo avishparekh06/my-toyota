@@ -135,7 +135,7 @@ export function LandingPage() {
               Join thousands of satisfied customers who found their perfect Toyota match.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/recommendations">
+              <Link to="/recommendations" onClick={() => window.scrollTo(0, 0)}>
                 <Button size="lg" variant="secondary" className="bg-white text-[var(--accent)] hover:bg-white/90 px-8">
                   Get My Recommendations
                   <ChevronRight className="ml-2 h-4 w-4" />

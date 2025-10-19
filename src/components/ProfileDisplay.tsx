@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Edit3, User, DollarSign, Car, MapPin, Users, Zap, Palette, Target, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import UserUpdateForm from './UserUpdateForm';
 import SavedPlansSection from './SavedPlansSection';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const ProfileDisplay: React.FC = () => {
   const { user, isLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -426,6 +428,7 @@ const ProfileDisplay: React.FC = () => {
           </Button>
           
           <Button 
+            onClick={() => navigate('/recommendations')}
             variant="outline"
             className="border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 hover:-translate-y-0.5 hover:shadow-lg"
           >

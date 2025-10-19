@@ -412,5 +412,51 @@
       "phone": "(512) 555-0123"
     },
     "dateAdded": "2024-01-23T00:00:00.000Z"
+  },
+  {
+    "vin": "1HGBH41JXMN109195",
+    "year": 2024,
+    "make": "Toyota",
+    "model": "Supra",
+    "trim": "3.0 Premium",
+    "bodyStyle": "Coupe",
+    "engine": "3.0L Turbo 6-Cylinder",
+    "horsepower": 382,
+    "drivetrain": "RWD",
+    "transmission": "8-Speed Automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 22,
+    "mpgHighway": 30,
+    "exteriorColor": "Renaissance Red 2.0",
+    "interiorColor": "Black Leather",
+    "stockNumber": "TSU24010",
+    "msrp": 57900,
+    "dealerPrice": 54900,
+    "features": ["Adaptive Suspension", "Brembo Brakes", "Sport Seats", "Premium Audio", "Wireless Charging"],
+    "dimensions": {
+      "length": "172.5 in",
+      "width": "73.0 in",
+      "height": "50.9 in",
+      "wheelbase": "97.2 in"
+    },
+    "status": "Available",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400",
+      "https://images.unsplash.com/photo-1549317336-206569e8475c?w=400"
+    ],
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001"
+    },
+    "dealership": {
+      "name": "Toyota of Houston",
+      "address": "456 Business Blvd",
+      "city": "Houston",
+      "state": "TX",
+      "zip": "77001",
+      "phone": "(713) 555-0456"
+    },
+    "dateAdded": "2024-01-24T00:00:00.000Z"
   }
 ]

@@ -673,9 +673,9 @@ const PlanSimulator: React.FC = () => {
               </div>
 
               {/* Results Section */}
-              <div className="p-6 bg-white rounded-b-2xl">
+              <div className="p-6 bg-white rounded-b-2xl h-[600px] flex flex-col">
                 {showResults ? (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col h-full">
                     {/* Plan Type Toggle - Moved up with tighter padding */}
                     <div className="mb-2">
                       <div className="flex items-center justify-between">
@@ -726,7 +726,7 @@ const PlanSimulator: React.FC = () => {
                     </h3>
                     
                     {/* Plans Display */}
-                    <div className="space-y-4 pb-4">
+                    <div className="space-y-4 pb-4 flex-1 overflow-y-auto">
                         {filteredPlans
                           .slice(currentPage * plansPerPage, (currentPage + 1) * plansPerPage)
                           .map((plan) => {
@@ -827,7 +827,7 @@ const PlanSimulator: React.FC = () => {
                     
                     {/* Bottom Pagination - Small Red Numbered Circles */}
                     {filteredPlans.length > plansPerPage && (
-                      <div className="flex justify-center items-center space-x-2 mt-4">
+                      <div className="flex justify-center items-center space-x-2 mt-auto pt-4">
                         {Array.from({ length: Math.ceil(filteredPlans.length / plansPerPage) }, (_, i) => (
                           <button
                             key={i}
