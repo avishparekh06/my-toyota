@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from "framer-motion"
 import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
@@ -17,26 +17,47 @@ const RecommendationPage = () => {
   const [recommendationResult, setRecommendationResult] = useState<RecommendationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showAllResults, setShowAllResults] = useState(true); // Show all results by default
+  const [showAllResults, setShowAllResults] = useState(false); // Show top 3 by default
+  const [hasRequestedRecommendations, setHasRequestedRecommendations] = useState(false); // Track if user has requested recommendations
   const [selectedCar, setSelectedCar] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const recommendationsRef = useRef<HTMLDivElement>(null);
 
-  // Auto-load recommendations when user is authenticated
-  useEffect(() => {
-    if (isAuthenticated && user && !authLoading) {
-      handleGetRecommendations();
+  // Remove auto-loading - recommendations will only load when user clicks the button
+
+  // Simplified version without debouncing to prevent click issues
+  const handleGetRecommendationsClick = () => {
+    handleGetRecommendations();
+  };
+
+  const scrollToRecommendations = () => {
+    if (recommendationsRef.current) {
+      const elementTop = recommendationsRef.current.offsetTop;
+      const offsetPosition = elementTop - 100; // Scroll down 100px less than the element position
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
-  }, [isAuthenticated, user, authLoading]);
+  };
 
   const handleGetRecommendations = async () => {
+    // Prevent multiple simultaneous requests
+    if (loading) {
+      return;
+    }
+
     if (!user) {
       setError('You must be logged in to get recommendations');
       return;
     }
 
+    // Set states immediately
     setLoading(true);
     setError(null);
     setRecommendations(null);
+    setHasRequestedRecommendations(true);
 
     try {
       // Use RAG system with user's ID - get more results to show all
@@ -44,6 +65,11 @@ const RecommendationPage = () => {
       
       setRecommendations(result.recommendations);
       setRecommendationResult(result);
+      
+      // Auto-scroll to recommendations after they're loaded
+      setTimeout(() => {
+        scrollToRecommendations();
+      }, 100); // Small delay to ensure DOM is updated
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -249,7 +275,7 @@ const RecommendationPage = () => {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   <Button 
-                    onClick={handleGetRecommendations}
+                    onClick={handleGetRecommendationsClick}
                     disabled={loading}
                     className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-12 py-4 text-xl font-bold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
                   >
@@ -326,7 +352,7 @@ const RecommendationPage = () => {
 
 
             {/* No Recommendations Message */}
-            {recommendations && recommendations.length === 0 && (
+            {hasRequestedRecommendations && !loading && recommendations && recommendations.length === 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -373,9 +399,55 @@ const RecommendationPage = () => {
               </motion.div>
             )}
 
-            {/* Recommendations Display */}
-            {recommendations && recommendations.length > 0 && (
+            {/* Loading State */}
+            {hasRequestedRecommendations && loading && (
               <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="mb-8"
+              >
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <motion.div
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#EB0A1E]/10 to-[#CF0A19]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <motion.div 
+                          className="w-8 h-8 border-3 border-[#EB0A1E] border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                      </div>
+                    </motion.div>
+                    <motion.h3
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4, delay: 0.2 }}
+                      className="text-xl font-semibold text-gray-900 mb-2"
+                    >
+                      Finding Your Perfect Toyota...
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4, delay: 0.3 }}
+                      className="text-gray-600"
+                    >
+                      Analyzing your preferences and matching them with our inventory
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Recommendations Display */}
+            {hasRequestedRecommendations && !loading && recommendations && recommendations.length > 0 && (
+              <motion.div
+                ref={recommendationsRef}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
@@ -417,7 +489,7 @@ const RecommendationPage = () => {
                               variant="outline"
                               size="sm"
                             >
-                              {showAllResults ? 'Show Top 5' : 'Show All Results'}
+                              {showAllResults ? 'Show Top 3' : 'Show All Results'}
                             </Button>
                           </motion.div>
                         </div>
@@ -485,12 +557,12 @@ const RecommendationPage = () => {
                     )}
                     
                     <motion.div 
-                      className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                      className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 2.0 }}
                     >
-                      {(showAllResults ? recommendations : recommendations.slice(0, 6)).map((rec, index) => (
+                      {(showAllResults ? recommendations : recommendations.slice(0, 3)).map((rec, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, y: 30, scale: 0.9 }}

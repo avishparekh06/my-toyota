@@ -93,7 +93,7 @@ export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-3xl !rounded-3xl" style={{ borderRadius: '24px' }}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900">
             {getVehicleName()}
@@ -310,18 +310,6 @@ export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
             </div>
           </div>
 
-          {/* Vehicle Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-              Vehicle Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">VIN</span>
-                <span className="font-mono text-gray-900">{car.vin}</span>
-              </div>
-            </div>
-          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">

@@ -62,12 +62,6 @@ export function Navbar() {
             >
               Plans
             </Link>
-            <Link
-              to="/#shopping"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Shopping
-            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -146,13 +140,6 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Plans
-            </Link>
-            <Link
-              to="/#shopping"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping
             </Link>
             <div className="pt-4 border-t border-[var(--border)] space-y-3">
               {isAuthenticated ? (
