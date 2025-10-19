@@ -9,7 +9,7 @@ import { getRecommendations } from '../recommendation/ragRecommender';
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { CarDetailModal } from "@/components/CarDetailModal";
 import { Recommendation, RecommendationResult } from "@/types/recommendation";
-import emblemLogo from "@/assets/images/logos/emblem_001.jpg";
+import emblemLogo from "../assets/images/logos/emblem_001.jpg";
 
 const RecommendationPage = () => {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
