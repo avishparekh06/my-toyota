@@ -37,59 +37,80 @@ export class EmbeddingService {
   }
 
   /**
-   * Create a comprehensive feature-based embedding
+   * Create a comprehensive feature-based embedding with weighted scores
    */
   private createFeatureEmbedding(text: string): number[] {
     const words = text.toLowerCase();
     const features: number[] = [];
     
-    // Vehicle type preferences (0-1 scale)
-    features.push(words.includes('sedan') ? 1 : 0);
-    features.push(words.includes('suv') ? 1 : 0);
-    features.push(words.includes('coupe') ? 1 : 0);
-    features.push(words.includes('hatchback') ? 1 : 0);
+    // Vehicle type preferences (weighted by frequency and context)
+    features.push(this.getWeightedScore(words, ['sedan', 'sedans'], 1.0));
+    features.push(this.getWeightedScore(words, ['suv', 'suvs'], 1.0));
+    features.push(this.getWeightedScore(words, ['coupe', 'coupes'], 1.0));
+    features.push(this.getWeightedScore(words, ['hatchback', 'hatchbacks'], 1.0));
+    features.push(this.getWeightedScore(words, ['truck', 'trucks', 'pickup'], 1.0));
     
     // Drivetrain preferences
-    features.push(words.includes('awd') ? 1 : 0);
-    features.push(words.includes('fwd') ? 1 : 0);
-    features.push(words.includes('rwd') ? 1 : 0);
+    features.push(this.getWeightedScore(words, ['awd', 'all-wheel drive'], 1.0));
+    features.push(this.getWeightedScore(words, ['fwd', 'front-wheel drive'], 1.0));
+    features.push(this.getWeightedScore(words, ['rwd', 'rear-wheel drive'], 1.0));
+    features.push(this.getWeightedScore(words, ['4wd', 'four-wheel drive'], 1.0));
     
     // Fuel type preferences
-    features.push(words.includes('hybrid') ? 1 : 0);
-    features.push(words.includes('electric') ? 1 : 0);
-    features.push(words.includes('gasoline') || words.includes('gas') ? 1 : 0);
+    features.push(this.getWeightedScore(words, ['hybrid', 'hybrids'], 1.0));
+    features.push(this.getWeightedScore(words, ['electric', 'ev', 'battery'], 1.0));
+    features.push(this.getWeightedScore(words, ['gasoline', 'gas', 'petrol'], 1.0));
     
-    // Lifestyle indicators
-    features.push(words.includes('family') ? 1 : 0);
-    features.push(words.includes('commute') ? 1 : 0);
-    features.push(words.includes('performance') ? 1 : 0);
-    features.push(words.includes('efficiency') ? 1 : 0);
-    features.push(words.includes('luxury') ? 1 : 0);
-    features.push(words.includes('budget') ? 1 : 0);
+    // Lifestyle indicators (weighted by context)
+    features.push(this.getWeightedScore(words, ['family', 'families', 'children', 'kids'], 0.8));
+    features.push(this.getWeightedScore(words, ['commute', 'commuting', 'daily', 'work'], 0.8));
+    features.push(this.getWeightedScore(words, ['performance', 'sport', 'sporty', 'fast'], 0.8));
+    features.push(this.getWeightedScore(words, ['efficiency', 'efficient', 'mpg', 'fuel economy'], 0.8));
+    features.push(this.getWeightedScore(words, ['luxury', 'premium', 'high-end'], 0.8));
+    features.push(this.getWeightedScore(words, ['budget', 'affordable', 'economical', 'cheap'], 0.8));
     
     // Location and demographics
-    features.push(words.includes('young') || words.includes('professional') ? 1 : 0);
-    features.push(words.includes('mature') || words.includes('established') ? 1 : 0);
-    features.push(words.includes('single') ? 1 : 0);
-    features.push(words.includes('couple') ? 1 : 0);
+    features.push(this.getWeightedScore(words, ['young', 'professional', 'millennial'], 0.6));
+    features.push(this.getWeightedScore(words, ['mature', 'established', 'adult'], 0.6));
+    features.push(this.getWeightedScore(words, ['single', 'individual'], 0.6));
+    features.push(this.getWeightedScore(words, ['couple', 'married', 'partner'], 0.6));
     
     // Financial indicators
-    features.push(words.includes('affluent') || words.includes('high income') ? 1 : 0);
-    features.push(words.includes('middle') || words.includes('moderate') ? 1 : 0);
-    features.push(words.includes('budget-conscious') || words.includes('economical') ? 1 : 0);
+    features.push(this.getWeightedScore(words, ['affluent', 'high income', 'wealthy', 'rich'], 0.7));
+    features.push(this.getWeightedScore(words, ['middle', 'moderate', 'average'], 0.7));
+    features.push(this.getWeightedScore(words, ['budget-conscious', 'economical', 'frugal'], 0.7));
     
     // Technical features
-    features.push(words.includes('safety') ? 1 : 0);
-    features.push(words.includes('technology') ? 1 : 0);
-    features.push(words.includes('comfort') ? 1 : 0);
-    features.push(words.includes('reliability') ? 1 : 0);
+    features.push(this.getWeightedScore(words, ['safety', 'safe', 'crash', 'protection'], 0.9));
+    features.push(this.getWeightedScore(words, ['technology', 'tech', 'digital', 'smart'], 0.9));
+    features.push(this.getWeightedScore(words, ['comfort', 'comfortable', 'luxury', 'premium'], 0.9));
+    features.push(this.getWeightedScore(words, ['reliability', 'reliable', 'dependable', 'quality'], 0.9));
     
-    // Text characteristics
+    // Text characteristics (normalized)
     features.push(Math.min(text.length / 500, 1)); // Normalized text length
-    features.push((text.match(/\$/g) || []).length / 10); // Price mentions
-    features.push((text.match(/\d+/g) || []).length / 20); // Number mentions
+    features.push(Math.min((text.match(/\$/g) || []).length / 10, 1)); // Price mentions
+    features.push(Math.min((text.match(/\d+/g) || []).length / 20, 1)); // Number mentions
+    
+    // Add some random variation to prevent identical embeddings
+    features.push(Math.random() * 0.1); // Small random component
     
     return features;
+  }
+
+  /**
+   * Get weighted score for keyword matching
+   */
+  private getWeightedScore(text: string, keywords: string[], weight: number): number {
+    let score = 0;
+    for (const keyword of keywords) {
+      if (text.includes(keyword)) {
+        score += weight;
+        // Bonus for multiple occurrences
+        const occurrences = (text.match(new RegExp(keyword, 'g')) || []).length;
+        score += (occurrences - 1) * 0.1;
+      }
+    }
+    return Math.min(score, 1.0); // Cap at 1.0
   }
 
   /**
@@ -126,25 +147,34 @@ export class EmbeddingService {
   createUserProfileText(user: any): string {
     const parts = [];
 
-    // Basic info
-    parts.push(`User: ${user.name}, Age: ${user.age}, Family Size: ${user.familySize}`);
+    // Basic info with safe defaults
+    const name = user.name || "User";
+    const age = user.age || 35;
+    const familySize = user.familySize || 2;
+    parts.push(`User: ${name}, Age: ${age}, Family Size: ${familySize}`);
 
     // Location
-    if (user.location) {
+    if (user.location && user.location.city && user.location.state) {
       parts.push(`Location: ${user.location.city}, ${user.location.state}`);
     }
 
     // Preferences
     if (user.preferences) {
       const prefs = [];
-      if (user.preferences.bodyStyle) prefs.push(`Body Style: ${user.preferences.bodyStyle.join(', ')}`);
-      if (user.preferences.drivetrain) prefs.push(`Drivetrain: ${user.preferences.drivetrain.join(', ')}`);
-      if (user.preferences.fuelType) prefs.push(`Fuel Type: ${user.preferences.fuelType.join(', ')}`);
+      if (user.preferences.bodyStyle && Array.isArray(user.preferences.bodyStyle)) {
+        prefs.push(`Body Style: ${user.preferences.bodyStyle.join(', ')}`);
+      }
+      if (user.preferences.drivetrain && Array.isArray(user.preferences.drivetrain)) {
+        prefs.push(`Drivetrain: ${user.preferences.drivetrain.join(', ')}`);
+      }
+      if (user.preferences.fuelType && Array.isArray(user.preferences.fuelType)) {
+        prefs.push(`Fuel Type: ${user.preferences.fuelType.join(', ')}`);
+      }
       if (prefs.length > 0) parts.push(`Preferences: ${prefs.join(', ')}`);
     }
 
     // Budget
-    if (user.budget) {
+    if (user.budget && user.budget.min && user.budget.max) {
       parts.push(`Budget: $${user.budget.min.toLocaleString()} - $${user.budget.max.toLocaleString()}`);
     }
 
@@ -171,11 +201,17 @@ export class EmbeddingService {
   createCarFeatureText(car: any): string {
     const parts = [];
 
-    // Basic car info
-    parts.push(`${car.year} ${car.make} ${car.model} ${car.trim}`);
+    // Basic car info with safe defaults
+    const year = car.year || 2024;
+    const make = car.make || "Toyota";
+    const model = car.model || "Vehicle";
+    const trim = car.trim || "";
+    parts.push(`${year} ${make} ${model} ${trim}`.trim());
 
     // Body style and type
-    parts.push(`Body Style: ${car.bodyStyle}`);
+    if (car.bodyStyle) {
+      parts.push(`Body Style: ${car.bodyStyle}`);
+    }
 
     // Engine and performance
     if (car.engine) parts.push(`Engine: ${car.engine}`);
@@ -183,14 +219,14 @@ export class EmbeddingService {
     if (car.mpgCity && car.mpgHighway) parts.push(`Fuel Economy: ${car.mpgCity}/${car.mpgHighway} MPG city/highway`);
 
     // Drivetrain and transmission
-    parts.push(`Drivetrain: ${car.drivetrain}`);
+    if (car.drivetrain) parts.push(`Drivetrain: ${car.drivetrain}`);
     if (car.transmission) parts.push(`Transmission: ${car.transmission}`);
 
     // Fuel type
-    parts.push(`Fuel Type: ${car.fuelType}`);
+    if (car.fuelType) parts.push(`Fuel Type: ${car.fuelType}`);
 
     // Features
-    if (car.features && car.features.length > 0) {
+    if (car.features && Array.isArray(car.features) && car.features.length > 0) {
       parts.push(`Key Features: ${car.features.join(', ')}`);
     }
 
@@ -296,6 +332,14 @@ export class EmbeddingService {
     const profileText = this.createUserProfileText(user);
     const embedding = await this.generateEmbedding(profileText);
 
+    console.log('Generated user embedding:', {
+      userId: user._id || user.id,
+      profileText,
+      embeddingLength: embedding.length,
+      embeddingSample: embedding.slice(0, 10),
+      embeddingSum: embedding.reduce((a, b) => a + b, 0)
+    });
+
     return {
       userId: user._id || user.id,
       profileText,
@@ -312,6 +356,15 @@ export class EmbeddingService {
   async generateCarEmbedding(car: any): Promise<CarEmbedding> {
     const featureText = this.createCarFeatureText(car);
     const embedding = await this.generateEmbedding(featureText);
+
+    console.log('Generated car embedding:', {
+      carId: car._id || car.id,
+      carName: `${car.year} ${car.make} ${car.model}`,
+      featureText,
+      embeddingLength: embedding.length,
+      embeddingSample: embedding.slice(0, 10),
+      embeddingSum: embedding.reduce((a, b) => a + b, 0)
+    });
 
     return {
       carId: car._id || car.id,

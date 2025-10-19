@@ -65,7 +65,11 @@ export class RAGRecommender {
    * Get recommendations for a user using RAG
    */
   async getRecommendations(userId: string, limit = 5) {
+    console.log('RAG getRecommendations called with:', { userId, limit });
+    console.log('System initialized:', this.initialized);
+    
     if (!this.initialized) {
+      console.log('System not initialized, initializing now...');
       await this.initialize();
     }
 
@@ -79,7 +83,7 @@ export class RAGRecommender {
       try {
         console.log('User not found in mock data, fetching current user profile from backend...');
         const response = await authApi.getProfile();
-        if (response.success) {
+        if (response.success && response.data) {
           // Convert the profile data to RAG format
           user = this.convertRealUserToRAGFormat(response.data);
           console.log('Successfully fetched and converted user profile data');
@@ -91,6 +95,8 @@ export class RAGRecommender {
             budget: user.budget,
             financial: user.financial
           });
+        } else {
+          throw new Error('Failed to get user profile from backend');
         }
       } catch (error) {
         console.error('Error fetching user profile from backend:', error);
@@ -106,11 +112,16 @@ export class RAGRecommender {
     // Get user embedding - generate if not exists (for real users)
     let userEmbedding = this.userEmbeddings.get(user._id || user.id);
     if (!userEmbedding) {
-      console.log('Generating embedding for real user...');
-      console.log('User data for embedding:', user);
-      userEmbedding = await this.embeddingService.generateUserEmbedding(user);
-      this.userEmbeddings.set(user._id || user.id, userEmbedding);
-      console.log('User embedding generated and stored');
+      try {
+        console.log('Generating embedding for real user...');
+        console.log('User data for embedding:', user);
+        userEmbedding = await this.embeddingService.generateUserEmbedding(user);
+        this.userEmbeddings.set(user._id || user.id, userEmbedding);
+        console.log('User embedding generated and stored');
+      } catch (error) {
+        console.error('Error generating user embedding:', error);
+        throw new Error(`Failed to generate user embedding: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
     } else {
       console.log('Using existing user embedding');
     }
@@ -121,24 +132,45 @@ export class RAGRecommender {
 
     // Find similar cars
     console.log('Starting similarity matching...');
-    const recommendations = await this.similarityService.findSimilarCars(
-      userEmbedding,
-      carEmbeddings,
-      user,
-      mockCars,
-      RAG_CONFIG.FILTERS,
-      RAG_CONFIG.RECOMMENDATION.SIMILARITY_WEIGHTS,
-      limit
-    );
-
-    console.log(`Found ${recommendations.length} similar cars before explanations`);
+    let recommendations;
+    try {
+      recommendations = await this.similarityService.findSimilarCars(
+        userEmbedding,
+        carEmbeddings,
+        user,
+        mockCars,
+        RAG_CONFIG.FILTERS,
+        RAG_CONFIG.RECOMMENDATION.SIMILARITY_WEIGHTS,
+        limit
+      );
+      console.log(`Found ${recommendations.length} similar cars before explanations`);
+    } catch (error) {
+      console.error('Error in similarity matching:', error);
+      throw new Error(`Failed to find similar cars: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
 
     // Generate explanations using LLM
     console.log('Generating explanations...');
-    const recommendationsWithExplanations = await this.llmService.generateMultipleExplanations(
-      user,
-      recommendations
-    );
+    let recommendationsWithExplanations;
+    try {
+      recommendationsWithExplanations = await this.llmService.generateMultipleExplanations(
+        user,
+        recommendations
+      );
+    } catch (error) {
+      console.error('Error generating explanations:', error);
+      // Use recommendations without explanations as fallback
+      recommendationsWithExplanations = recommendations.map(rec => ({
+        ...rec,
+        explanation: "This vehicle offers excellent value and features that match your preferences.",
+        reasons: [
+          "Matches your budget requirements",
+          "Offers the features you need",
+          "Provides reliable performance",
+          "Great value for your investment"
+        ]
+      }));
+    }
 
     console.log('Generated RAG recommendations:', recommendationsWithExplanations.length);
     console.log('Recommendations:', recommendationsWithExplanations);
@@ -308,13 +340,20 @@ export class RAGRecommender {
       return value?.toString() || '';
     };
 
+    // Helper function to safely extract array values
+    const extractArray = (value: any): string[] => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'string') return [value];
+      return [];
+    };
+
     // Extract numeric values safely
     const familyInfo = extractNumber(realUser.personal?.familyInfo);
     const avgCommuteDistance = extractNumber(realUser.personal?.avgCommuteDistance);
     const householdIncome = extractNumber(realUser.finance?.householdIncome);
     const creditScore = extractNumber(realUser.finance?.creditScore);
 
-    // Extract location information
+    // Extract location information with better fallbacks
     const personalLocation = realUser.personal?.location || '';
     const locationParts = personalLocation.split(',').map((s: string) => s.trim());
     const city = locationParts[0] || realUser.location?.city || "Unknown";
@@ -326,9 +365,19 @@ export class RAGRecommender {
     const budgetMax = Math.round(annualIncome * 0.4); // 40% of annual income
     const budgetPreferred = Math.round(annualIncome * 0.3); // 30% of annual income
 
+    // Extract preferences with better defaults
+    const buildPreferences = extractArray(realUser.personal?.buildPreferences);
+    const vehicleType = realUser.preferences?.vehicleType;
+    const bodyStyle = buildPreferences.length > 0 ? buildPreferences : (vehicleType ? [vehicleType] : ["Sedan"]);
+
+    const fuelType = realUser.personal?.fuelType || realUser.preferences?.fuelType || "Gasoline";
+    const featurePreferences = extractArray(realUser.personal?.featurePreferences).concat(
+      extractArray(realUser.preferences?.features)
+    );
+
     const convertedUser = {
       _id: extractString(realUser._id),
-      name: `${realUser.firstName || ''} ${realUser.lastName || ''}`.trim(),
+      name: `${realUser.firstName || ''} ${realUser.lastName || ''}`.trim() || "User",
       age: realUser.age || 35,
       familySize: familyInfo || 2,
       location: {
@@ -337,11 +386,11 @@ export class RAGRecommender {
         zip: realUser.location?.zip || "00000"
       },
       preferences: {
-        bodyStyle: realUser.personal?.buildPreferences || [realUser.preferences?.vehicleType || "Sedan"],
+        bodyStyle: bodyStyle,
         drivetrain: ["FWD"], // Default since not specified in user model
-        fuelType: [realUser.personal?.fuelType || "Gasoline"],
+        fuelType: [fuelType],
         colorPreference: realUser.personal?.color || "White",
-        featurePreferences: realUser.personal?.featurePreferences || realUser.preferences?.features || []
+        featurePreferences: featurePreferences
       },
       budget: {
         min: budgetMin,

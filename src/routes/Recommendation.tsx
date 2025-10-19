@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/AuthContext"
 import { getRecommendations } from '../recommendation/ragRecommender';
+import RAGDebugger from '../components/RAGDebugger';
 
 interface Recommendation {
   car: string;
@@ -13,15 +14,35 @@ interface Recommendation {
   similarityScore: number;
   budgetFit: number;
   locationProximity: number;
+  semanticSimilarity: number;
+  breakdown: {
+    semantic: number;
+    budget: number;
+    location: number;
+  };
   explanation: string;
   reasons: string[];
+}
+
+interface RecommendationResult {
+  user: {
+    id: string;
+    name: string;
+  };
+  recommendations: Recommendation[];
+  totalCarsAnalyzed: number;
+  filteredCars: number;
+  method: string;
 }
 
 const RecommendationPage = () => {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
+  const [recommendationResult, setRecommendationResult] = useState<RecommendationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDebugger, setShowDebugger] = useState(false);
+  const [showAllResults, setShowAllResults] = useState(true); // Show all results by default
 
   // Auto-load recommendations when user is authenticated
   useEffect(() => {
@@ -41,9 +62,15 @@ const RecommendationPage = () => {
     setRecommendations(null);
 
     try {
-      // Use RAG system with user's ID
-      const result = await getRecommendations(user._id, 5);
+      // Use RAG system with user's ID - get more results to show all
+      console.log('Getting recommendations for user:', user._id);
+      const result = await getRecommendations(user._id, 20); // Get more results
+      console.log('Received recommendation result:', result);
+      console.log('Recommendations array:', result.recommendations);
+      console.log('Recommendations length:', result.recommendations?.length);
+      
       setRecommendations(result.recommendations);
+      setRecommendationResult(result);
     } catch (err) {
       console.error('Error getting recommendations:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -131,18 +158,34 @@ const RecommendationPage = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-end">
+                  <div className="flex items-end space-x-2">
                     <Button 
                       onClick={handleGetRecommendations}
                       disabled={loading}
-                      className="w-full bg-[#EB0A1E] hover:bg-[#CF0A19] text-white"
+                      className="flex-1 bg-[#EB0A1E] hover:bg-[#CF0A19] text-white"
                     >
                       {loading ? 'Getting Recommendations...' : 'Get My Recommendations'}
+                    </Button>
+                    <Button 
+                      onClick={() => setShowDebugger(!showDebugger)}
+                      variant="outline"
+                      className="px-4"
+                    >
+                      {showDebugger ? 'Hide' : 'Debug'}
                     </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
+
+            {/* Debugger */}
+            {showDebugger && (
+              <Card className="mb-8">
+                <CardContent className="p-6">
+                  <RAGDebugger />
+                </CardContent>
+              </Card>
+            )}
 
             {/* Error Display */}
             {error && (
@@ -156,8 +199,47 @@ const RecommendationPage = () => {
               </Card>
             )}
 
-            {/* Recommendations Display */}
+            {/* Debug Info */}
             {recommendations && (
+              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h4 className="font-semibold text-yellow-800 mb-2">Debug Info - Showing ALL Cars</h4>
+                <p className="text-sm text-yellow-700">
+                  Total recommendations: {recommendations.length}
+                </p>
+                <p className="text-sm text-yellow-700">
+                  Show all results: {showAllResults ? 'Yes' : 'No'}
+                </p>
+                <p className="text-sm text-yellow-700">
+                  Displaying: {showAllResults ? recommendations.length : Math.min(recommendations.length, 5)} cars
+                </p>
+                <p className="text-sm text-yellow-700">
+                  No filters applied - all cars shown with similarity scores
+                </p>
+              </div>
+            )}
+
+            {/* No Recommendations Message */}
+            {recommendations && recommendations.length === 0 && (
+              <Card className="mb-8">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Recommendations Found</h3>
+                  <p className="text-gray-600 mb-4">
+                    We couldn't find any cars that match your current profile and preferences.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Try updating your profile or adjusting your preferences to get better matches.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Recommendations Display */}
+            {recommendations && recommendations.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -165,12 +247,63 @@ const RecommendationPage = () => {
               >
                 <Card>
                   <CardContent className="p-6">
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-                      Your Personalized Recommendations
-                    </h3>
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-2xl font-semibold text-gray-900">
+                        Your Personalized Recommendations
+                      </h3>
+                      <div className="flex items-center space-x-4">
+                        {recommendationResult && (
+                          <div className="text-sm text-gray-600">
+                            <span className="font-medium">{recommendationResult.filteredCars}</span> of{' '}
+                            <span className="font-medium">{recommendationResult.totalCarsAnalyzed}</span> cars match
+                          </div>
+                        )}
+                        <Button
+                          onClick={() => setShowAllResults(!showAllResults)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          {showAllResults ? 'Show Top 5' : 'Show All Cars'}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Results Summary */}
+                    {recommendationResult && (
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-bold text-green-700">{recommendations.length}</div>
+                            <div className="text-sm text-green-600">All Cars Shown</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-blue-700">{recommendationResult.totalCarsAnalyzed}</div>
+                            <div className="text-sm text-blue-600">Total Cars Analyzed</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-purple-700">
+                              {recommendations.length > 0 ? Math.round(recommendations[0].similarityScore * 100) : 0}%
+                            </div>
+                            <div className="text-sm text-purple-600">Best Match Score</div>
+                          </div>
+                        </div>
+                        
+                        {/* Scoring Weights Info */}
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <div className="text-center">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-2">Scoring Weights</h4>
+                            <div className="flex justify-center space-x-6 text-xs text-gray-600">
+                              <span>Profile Match: <span className="font-semibold">60%</span></span>
+                              <span>Budget Fit: <span className="font-semibold">30%</span></span>
+                              <span>Location: <span className="font-semibold">10%</span></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {recommendations.map((rec, index) => (
+                      {(showAllResults ? recommendations : recommendations.slice(0, 5)).map((rec, index) => (
                         <motion.div
                           key={index}
                           initial={{ opacity: 0, y: 20 }}
@@ -193,9 +326,16 @@ const RecommendationPage = () => {
                             </div>
                             {/* Match Score Badge */}
                             <div className="absolute top-3 right-3">
-                              <span className="bg-[#EB0A1E] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                              <div className="bg-[#EB0A1E] text-white px-3 py-1 rounded-full text-sm font-semibold">
                                 {Math.round(rec.similarityScore * 100)}% Match
-                              </span>
+                              </div>
+                            </div>
+                            
+                            {/* Ranking Badge */}
+                            <div className="absolute top-3 left-3">
+                              <div className="bg-black/70 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                #{index + 1}
+                              </div>
                             </div>
                           </div>
 
@@ -236,6 +376,60 @@ const RecommendationPage = () => {
                               </div>
                               <div className="text-sm text-gray-500">
                                 MSRP: ${rec.carData.msrp.toLocaleString()}
+                              </div>
+                            </div>
+
+                            {/* Detailed Scoring Breakdown */}
+                            <div className="bg-blue-50 rounded-lg p-3 mb-4">
+                              <h5 className="font-semibold text-blue-900 mb-2 text-sm">Match Breakdown</h5>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-blue-700">Overall Match:</span>
+                                  <span className="font-semibold text-blue-900">{Math.round(rec.similarityScore * 100)}%</span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-blue-700">Profile Match:</span>
+                                  <span className="font-semibold text-blue-900">{Math.round(rec.semanticSimilarity * 100)}%</span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-blue-700">Budget Fit:</span>
+                                  <span className="font-semibold text-blue-900">{Math.round(rec.budgetFit * 100)}%</span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-blue-700">Location:</span>
+                                  <span className="font-semibold text-blue-900">{Math.round(rec.locationProximity * 100)}%</span>
+                                </div>
+                              </div>
+                              
+                              {/* Progress bars for visual representation */}
+                              <div className="mt-3 space-y-1">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-16 text-xs text-blue-700">Profile:</div>
+                                  <div className="flex-1 bg-blue-200 rounded-full h-1.5">
+                                    <div 
+                                      className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
+                                      style={{ width: `${rec.semanticSimilarity * 100}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-16 text-xs text-blue-700">Budget:</div>
+                                  <div className="flex-1 bg-blue-200 rounded-full h-1.5">
+                                    <div 
+                                      className="bg-green-600 h-1.5 rounded-full transition-all duration-300" 
+                                      style={{ width: `${rec.budgetFit * 100}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-16 text-xs text-blue-700">Location:</div>
+                                  <div className="flex-1 bg-blue-200 rounded-full h-1.5">
+                                    <div 
+                                      className="bg-purple-600 h-1.5 rounded-full transition-all duration-300" 
+                                      style={{ width: `${rec.locationProximity * 100}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
 
