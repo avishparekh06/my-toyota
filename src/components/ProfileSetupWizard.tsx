@@ -55,6 +55,7 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
     city: '',
     state: '',
     zip: '',
+    phone: '',
     featurePreferences: [] as string[],
     buildPreferences: [] as string[],
     modelPreferences: '',
@@ -84,6 +85,7 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
         city: user.location?.city || '',
         state: user.location?.state || '',
         zip: user.location?.zip || '',
+        phone: user.phone || '',
         featurePreferences: user.personal?.featurePreferences || [],
         buildPreferences: user.personal?.buildPreferences || [],
         modelPreferences: user.personal?.modelPreferences?.join(', ') || '',
@@ -197,7 +199,8 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
       await authApi.updateUserData(user._id, {
         personal: cleanPersonalUpdate,
         finance: cleanFinanceUpdate,
-        location: cleanLocationUpdate
+        location: cleanLocationUpdate,
+        phone: personalData.phone || undefined
       });
 
       // Refresh user data to get the latest information
@@ -310,6 +313,21 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
                     placeholder="e.g., 94102"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-[var(--text)] mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={personalData.phone}
+                  onChange={handlePersonalChange}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                  placeholder="e.g., (555) 123-4567"
+                />
               </div>
 
               <div>

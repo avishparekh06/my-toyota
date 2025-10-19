@@ -7,6 +7,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   age?: number;
   location?: {
     city: string;
@@ -192,7 +193,7 @@ export const authApi = {
   },
 
   // Update user personal and finance data
-  updateUserData: async (userId: string, data: { personal?: Partial<User['personal']>; finance?: Partial<User['finance']>; location?: Partial<User['location']> }): Promise<{ success: boolean; data: User; message: string }> => {
+  updateUserData: async (userId: string, data: { personal?: Partial<User['personal']>; finance?: Partial<User['finance']>; location?: Partial<User['location']>; phone?: string }): Promise<{ success: boolean; data: User; message: string }> => {
     return apiRequest<{ success: boolean; data: User; message: string }>(`/users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
