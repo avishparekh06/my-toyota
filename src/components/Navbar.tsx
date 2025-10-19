@@ -54,18 +54,6 @@ export function Navbar() {
             >
               Recommendations
             </Link>
-            <Link
-              to="/#shopping"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Shopping
-            </Link>
-            <Link
-              to="/#owners"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Owners
-            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -91,9 +79,11 @@ export function Navbar() {
             ) : (
               <>
                 {/* Profile Icon */}
-                <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
-                  <ProfileIcon className="text-gray-700" />
-                </button>
+                <Link to="/auth">
+                  <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
+                    <ProfileIcon className="text-gray-700" />
+                  </button>
+                </Link>
                 <Link to="/auth">
                   <PrimaryButton size="sm" className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
                     Create account
@@ -135,20 +125,6 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Recommendations
-            </Link>
-            <Link
-              to="/#shopping"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping
-            </Link>
-            <Link
-              to="/#owners"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Owners
             </Link>
             <div className="pt-4 border-t border-[var(--border)] space-y-3">
               {isAuthenticated ? (

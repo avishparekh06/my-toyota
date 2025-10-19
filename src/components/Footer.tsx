@@ -16,25 +16,6 @@ export function Footer() {
             </ul>
           </div>
           
-          <div className="space-y-4">
-            <h3 className="font-semibold text-[var(--text)]">Shopping</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/#build" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Build & Price</Link></li>
-              <li><Link to="/#inventory" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Find Inventory</Link></li>
-              <li><Link to="/#financing" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Financing</Link></li>
-              <li><Link to="/#trade" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Trade-In Value</Link></li>
-            </ul>
-          </div>
-          
-          <div className="space-y-4">
-            <h3 className="font-semibold text-[var(--text)]">Owners</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/#my-toyota" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">My Toyota</Link></li>
-              <li><Link to="/#service" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Service</Link></li>
-              <li><Link to="/#warranty" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Warranty</Link></li>
-              <li><Link to="/#recalls" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Recalls</Link></li>
-            </ul>
-          </div>
           
           <div className="space-y-4">
             <h3 className="font-semibold text-[var(--text)]">Support</h3>
