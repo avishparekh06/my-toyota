@@ -54,18 +54,6 @@ export function Navbar() {
             >
               Recommendations
             </Link>
-            <Link
-              to="/#shopping"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Shopping
-            </Link>
-            <Link
-              to="/#owners"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Owners
-            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -135,20 +123,6 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Recommendations
-            </Link>
-            <Link
-              to="/#shopping"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping
-            </Link>
-            <Link
-              to="/#owners"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Owners
             </Link>
             <div className="pt-4 border-t border-[var(--border)] space-y-3">
               {isAuthenticated ? (
