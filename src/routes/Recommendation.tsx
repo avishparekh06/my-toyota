@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from "framer-motion"
 import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
@@ -42,7 +42,7 @@ const RecommendationPage = () => {
 
     try {
       // Use RAG system with user's ID
-      const result = await getRecommendations(user._id || user.id, 5);
+      const result = await getRecommendations(user._id, 5);
       setRecommendations(result.recommendations);
     } catch (err) {
       console.error('Error getting recommendations:', err);
@@ -125,7 +125,7 @@ const RecommendationPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName || user?.name}!</h3>
+                      <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
                       <p className="text-sm text-gray-600">
                         We'll use your profile data to find the perfect Toyota for you.
                       </p>
