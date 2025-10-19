@@ -6,22 +6,25 @@ import { RecommendationPage } from "@/routes/Recommendation"
 import { UserProfilePage } from "@/routes/UserProfile"
 import { PlanSimulatorPage } from "@/routes/PlanSimulator"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { CarProvider } from "@/contexts/CarContext"
 import { Navbar } from "@/components/Navbar"
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/vehicles" element={<VehiclesPage />} />
-          <Route path="/recommendations" element={<RecommendationPage />} />
-          <Route path="/plans" element={<PlanSimulatorPage />} />
-          <Route path="/profile" element={<UserProfilePage />} />
-        </Routes>
-      </Router>
+      <CarProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/vehicles" element={<VehiclesPage />} />
+            <Route path="/recommendations" element={<RecommendationPage />} />
+            <Route path="/plans" element={<PlanSimulatorPage />} />
+            <Route path="/profile" element={<UserProfilePage />} />
+          </Routes>
+        </Router>
+      </CarProvider>
     </AuthProvider>
   )
 }

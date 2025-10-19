@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useSearchParams } from 'react-router-dom';
+import { useCar } from '../contexts/CarContext';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { calculateAPR } from '../utils/aprEngine';
 
 interface Car {
@@ -8,10 +9,14 @@ interface Car {
   make: string;
   model: string;
   year: number;
-  trim: string;
+  trim?: string;
   msrp: number;
   dealerPrice: number;
   image?: string;
+  location?: {
+    city: string;
+    state: string;
+  };
 }
 
 interface FinancialInfo {
@@ -41,6 +46,8 @@ interface FinancingPlan {
 
 const PlanSimulator: React.FC = () => {
   const { user } = useAuth();
+  const { selectedCar: contextCar } = useCar();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [financialInfo, setFinancialInfo] = useState<FinancialInfo>({
@@ -57,28 +64,38 @@ const PlanSimulator: React.FC = () => {
   const plansPerPage = 4;
   const [selectedPlanType, setSelectedPlanType] = useState<'Finance' | 'Lease'>('Finance');
 
-  // Load car data from URL parameters
+  // Load car data from context or URL parameters
   useEffect(() => {
-    const carData = searchParams.get('car');
-    if (carData) {
-      try {
-        const parsedCar = JSON.parse(decodeURIComponent(carData));
-        setSelectedCar(parsedCar);
-      } catch (error) {
-        console.error('Error parsing car data:', error);
+    // Prioritize context car over URL parameters
+    if (contextCar) {
+      setSelectedCar(contextCar);
+    } else {
+      const carData = searchParams.get('car');
+      if (carData) {
+        try {
+          const parsedCar = JSON.parse(decodeURIComponent(carData));
+          setSelectedCar(parsedCar);
+        } catch (error) {
+          console.error('Error parsing car data:', error);
+        }
       }
     }
-  }, [searchParams]);
+  }, [contextCar, searchParams]);
 
   // Pre-fill form with user data
   useEffect(() => {
     if (user && user.finance && !isInitialized) {
+      // Calculate a reasonable monthly budget from the user's budget range
+      const monthlyBudgetFromRange = user.finance.budgetRange 
+        ? Math.round(user.finance.budgetRange.max / 60) // Assuming 60-month term as default
+        : 0;
+      
       setFinancialInfo({
         creditScore: user.finance.creditScore?.toString() || '',
         annualIncome: user.finance.householdIncome?.toString() || '',
         downPayment: '0',
         preferredTerm: '',
-        monthlyBudget: '0'
+        monthlyBudget: monthlyBudgetFromRange.toString()
       });
       setIsInitialized(true);
     }
@@ -301,9 +318,60 @@ const PlanSimulator: React.FC = () => {
 
 
 
+  // If no car is selected, redirect to recommendations
+  useEffect(() => {
+    if (!selectedCar && !contextCar) {
+      navigate('/recommendations');
+    }
+  }, [selectedCar, contextCar, navigate]);
+
+  // Show loading state while car is being loaded
+  if (!selectedCar) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EB0A1E] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading financing options...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center p-8">
       <div className="max-w-[1200px] mx-auto w-full">
+        {/* Breadcrumb Header */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+            <button 
+              onClick={() => navigate('/recommendations')}
+              className="hover:text-[#EB0A1E] transition-colors duration-200 flex items-center space-x-1"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>Back to Recommendations</span>
+            </button>
+            <span>/</span>
+            <span className="text-gray-900 font-medium">Financing Options</span>
+          </div>
+          
+          {selectedCar && (
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Financing Options for {selectedCar.year} {selectedCar.make} {selectedCar.model} {selectedCar.trim}
+              </h1>
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <span>MSRP: <span className="font-semibold text-gray-900">${selectedCar.msrp.toLocaleString()}</span></span>
+                <span>•</span>
+                <span>Dealer Price: <span className="font-semibold text-gray-900">${selectedCar.dealerPrice.toLocaleString()}</span></span>
+                <span>•</span>
+                <span>Location: <span className="font-semibold text-gray-900">{selectedCar.location?.city || 'N/A'}, {selectedCar.location?.state || 'N/A'}</span></span>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Split Layout */}
         <div className="flex gap-10 items-stretch">
           {/* Left Side - Financing Controls */}

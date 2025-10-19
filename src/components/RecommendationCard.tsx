@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Recommendation } from '@/types/recommendation'
+import { useCar } from '@/contexts/CarContext'
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -11,6 +12,8 @@ interface RecommendationCardProps {
 
 export function RecommendationCard({ recommendation, className, onViewDetails, rank }: RecommendationCardProps) {
   const { carData: car } = recommendation;
+  const navigate = useNavigate();
+  const { setSelectedCar } = useCar();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -54,11 +57,13 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
     }
   }
 
-  const handleViewOptionsClick = (e: React.MouseEvent) => {
+
+  const handleExploreFinancingClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (onViewDetails) {
-      onViewDetails(recommendation)
-    }
+    // Save the selected car to context/localStorage
+    setSelectedCar(car)
+    // Navigate to the plans page
+    navigate('/plans')
   }
 
   return (
@@ -272,13 +277,19 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Action Buttons */}
         <div className="space-y-3 mt-auto">
           <button 
-            onClick={handleViewOptionsClick}
-            className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm hover:scale-[1.02]"
+            onClick={handleExploreFinancingClick}
+            className="w-full py-3 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25 hover:scale-[1.02] group relative"
+            title="See personalized payment plans and adjust terms for this car"
           >
-            View Details
+            <span className="flex items-center justify-center space-x-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              </svg>
+              <span>Explore Financing Options</span>
+            </span>
           </button>
-          <button className="w-full py-3 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25 hover:scale-[1.02]">
-            Select Vehicle
+          <button className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm hover:scale-[1.02]">
+            View Details
           </button>
         </div>
       </div>
