@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import { Menu, X, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PrimaryButton } from "@/components/PrimaryButton"
-import { Container } from "@/components/Container"
 import { ProfileIcon } from "@/components/Icon"
 import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
@@ -147,6 +146,15 @@ export function Navbar() {
             >
               Plans
             </Link>
+            {isAuthenticated && (
+              <Link
+                to="/saved-plans"
+                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Saved Plans
+              </Link>
+            )}
             <Link
               to="/#shopping"
               className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"

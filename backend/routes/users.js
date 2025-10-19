@@ -389,7 +389,15 @@ router.post('/simulations', authenticateToken, async (req, res) => {
 router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { personal, finance } = req.body;
+    const { personal, finance, favoritedPlans } = req.body;
+    
+    console.log('User update request:', { 
+      userId: id, 
+      hasPersonal: !!personal, 
+      hasFinance: !!finance, 
+      hasFavoritedPlans: !!favoritedPlans,
+      favoritedPlansData: JSON.stringify(favoritedPlans, null, 2)
+    });
 
     // Verify the user is updating their own data or has admin privileges
     if (req.user.userId !== id) {
@@ -421,12 +429,65 @@ router.put('/:id', authenticateToken, async (req, res) => {
       updateData.finance = { ...user.finance, ...finance };
     }
 
+
+    // Handle favoritedPlans updates
+    if (favoritedPlans) {
+      console.log('Processing favoritedPlans update:', JSON.stringify(favoritedPlans, null, 2));
+      if (favoritedPlans.$push) {
+        // Add new plan to favoritedPlans array
+        console.log('Using $push operation with data:', JSON.stringify(favoritedPlans.$push, null, 2));
+        updateData.$push = { favoritedPlans: favoritedPlans.$push };
+      } else if (favoritedPlans.$pull) {
+        // Remove plan from favoritedPlans array
+        console.log('Using $pull operation with data:', JSON.stringify(favoritedPlans.$pull, null, 2));
+        updateData.$pull = { favoritedPlans: favoritedPlans.$pull };
+      } else if (Array.isArray(favoritedPlans)) {
+        // Replace entire favoritedPlans array
+        console.log('Replacing entire favoritedPlans array with:', JSON.stringify(favoritedPlans, null, 2));
+        updateData.favoritedPlans = favoritedPlans;
+      }
+    }
+
     // Update the user
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    let updatedUser;
+    
+    console.log('Final updateData:', JSON.stringify(updateData, null, 2));
+    console.log('User before update - favoritedPlans:', user.favoritedPlans?.length || 0);
+    console.log('User before update - savedPlans:', user.savedPlans?.length || 0);
+    
+    if (updateData.$push || updateData.$pull) {
+      // Use MongoDB operators for array operations
+      console.log('Using MongoDB operators for update');
+      try {
+        updatedUser = await User.findByIdAndUpdate(
+          id,
+          updateData,
+          { new: true, runValidators: true }
+        );
+        console.log('MongoDB operators update successful');
+        console.log('User after update - favoritedPlans:', updatedUser.favoritedPlans?.length || 0);
+        console.log('User after update - savedPlans:', updatedUser.savedPlans?.length || 0);
+      } catch (updateError) {
+        console.error('MongoDB operators update failed:', updateError);
+        throw updateError;
+      }
+    } else {
+      // Use regular update for other fields
+      console.log('Using regular update for fields');
+      try {
+        updatedUser = await User.findByIdAndUpdate(
+          id,
+          updateData,
+          { new: true, runValidators: true }
+        );
+        console.log('Regular update successful');
+        console.log('User after update - favoritedPlans:', updatedUser.favoritedPlans?.length || 0);
+        console.log('User after update - savedPlans:', updatedUser.savedPlans?.length || 0);
+      } catch (updateError) {
+        console.error('Regular update failed:', updateError);
+        throw updateError;
+      }
+    }
 
     res.json({
       success: true,
@@ -472,6 +533,46 @@ router.get('/embeddings', authenticateToken, async (req, res) => {
       success: false, 
       error: 'Failed to fetch user embeddings',
       message: error.message 
+    });
+  }
+});
+
+// GET /api/users/:id - Get user by ID
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Verify the user is accessing their own data or has admin privileges
+    if (req.user.userId !== id) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. You can only access your own data.'
+      });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    console.log('User data being returned:', {
+      favoritedPlans: user.favoritedPlans?.length || 0,
+      savedPlans: user.savedPlans?.length || 0
+    });
+
+    res.json({
+      success: true,
+      data: user.getPublicProfile()
+    });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch user data',
+      message: error.message
     });
   }
 });

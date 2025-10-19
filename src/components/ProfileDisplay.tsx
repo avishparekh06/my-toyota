@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Edit3, User, DollarSign, Car, MapPin, Users, Zap, Palette, Target, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import UserUpdateForm from './UserUpdateForm';
+import SavedPlansSection from './SavedPlansSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -404,13 +405,16 @@ const ProfileDisplay: React.FC = () => {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* Saved Plans Section */}
+          <SavedPlansSection />
         </div>
 
         {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-8 flex justify-center space-x-4"
         >
           <Button
