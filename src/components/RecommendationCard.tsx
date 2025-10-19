@@ -189,20 +189,6 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
           <h6 className="font-medium text-gray-700 mb-2">Match Breakdown:</h6>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Budget Fit</span>
-              <div className="flex items-center space-x-2">
-                <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                  <div 
-                    className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${recommendation.budgetFit * 100}%` }}
-                  ></div>
-                </div>
-                <span className="text-xs font-medium text-gray-700 w-8">
-                  {Math.round(recommendation.budgetFit * 100)}%
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Location</span>
               <div className="flex items-center space-x-2">
                 <div className="w-16 bg-gray-200 rounded-full h-1.5">
@@ -255,8 +241,19 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
                 {formatPrice(car.msrp)}
               </span>
             </div>
-            <div className="text-sm text-gray-500">
-              as shown {formatPrice(car.dealerPrice)}
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-500">
+                as shown {formatPrice(car.dealerPrice)}
+              </div>
+              {/* Budget Checkmark */}
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                  </svg>
+                </div>
+                <span className="text-xs font-medium text-green-600">Budget Fit</span>
+              </div>
             </div>
           </div>
         </div>

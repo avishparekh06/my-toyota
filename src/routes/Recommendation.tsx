@@ -9,6 +9,7 @@ import { getRecommendations } from '../recommendation/ragRecommender';
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { CarDetailModal } from "@/components/CarDetailModal";
 import { Recommendation, RecommendationResult } from "@/types/recommendation";
+import emblemLogo from "@/assets/images/logos/emblem_001.jpg";
 
 const RecommendationPage = () => {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -109,164 +110,368 @@ const RecommendationPage = () => {
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-gradient-to-br from-white via-gray-50 to-gray-100 pt-[68px] relative overflow-hidden">
+        {/* Toyota Red Accent */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#EB0A1E] to-[#CF0A19]"></div>
+        
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 opacity-3">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23EB0A1E' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}></div>
+        </div>
+        
         <Container>
-          <div className="py-12 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Smart Vehicle Recommendations
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get personalized Toyota recommendations using AI-powered semantic matching based on your profile, preferences, and financial situation.
-            </p>
-          </div>
+          <motion.div 
+            className="py-20 text-center relative z-10"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            {/* Toyota Logo */}
+            <motion.div 
+              className="mb-12"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <img
+                src={emblemLogo}
+                alt="Toyota Logo"
+                className="h-16 w-auto mx-auto"
+              />
+            </motion.div>
+            
+            {/* Main Title */}
+            <motion.h1 
+              className="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Your Personalized
+              <br />
+              <motion.span 
+                className="text-[#EB0A1E]"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                Toyota
+              </motion.span> Match
+            </motion.h1>
+            
+            {/* Subtitle */}
+            <motion.p 
+              className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              Discover your perfect Toyota with AI-powered recommendations tailored to your lifestyle, budget, and preferences.
+            </motion.p>
+            
+            {/* User Info Card */}
+            <motion.div 
+              className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto border border-gray-200 shadow-xl"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.7, delay: 1.0 }}
+            >
+              <motion.div 
+                className="flex items-center justify-center mb-6"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+              >
+                <motion.div 
+                  className="w-16 h-16 bg-[#EB0A1E] rounded-full flex items-center justify-center mr-4 shadow-lg"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.4, delay: 1.4, type: "spring", stiffness: 200 }}
+                >
+                  <span className="text-white text-2xl font-bold">
+                    {user?.firstName?.charAt(0)?.toUpperCase()}
+                  </span>
+                </motion.div>
+                <div className="text-left">
+                  <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user?.firstName}!</h2>
+                  <p className="text-gray-600">Ready to find your perfect Toyota?</p>
+                </div>
+              </motion.div>
+              
+              {user?.finance?.budgetRange && (
+                <motion.div 
+                  className="bg-gradient-to-r from-[#EB0A1E]/10 to-[#CF0A19]/10 rounded-2xl p-6 border border-[#EB0A1E]/20 mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1.6 }}
+                >
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2 text-[#EB0A1E]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+                    </svg>
+                    Your Budget Range
+                  </h3>
+                  <motion.div 
+                    className="flex items-center justify-center space-x-12 text-lg"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 1.8 }}
+                  >
+                    <div className="text-center">
+                      <span className="text-gray-500 block text-sm font-medium">Minimum</span>
+                      <span className="font-bold text-[#EB0A1E] text-2xl">
+                        ${user.finance.budgetRange.min.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="text-[#EB0A1E] text-2xl">—</div>
+                    <div className="text-center">
+                      <span className="text-gray-500 block text-sm font-medium">Maximum</span>
+                      <span className="font-bold text-[#EB0A1E] text-2xl">
+                        ${user.finance.budgetRange.max.toLocaleString()}
+                      </span>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+              
+              {/* Get Recommendations Button */}
+              <motion.div 
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 2.0 }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Button 
+                    onClick={handleGetRecommendations}
+                    disabled={loading}
+                    className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-12 py-4 text-xl font-bold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300"
+                  >
+                    {loading ? (
+                      <motion.div 
+                        className="flex items-center space-x-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <motion.div 
+                          className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        <span>Finding Your Perfect Toyota...</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div 
+                        className="flex items-center space-x-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <motion.svg 
+                          className="w-6 h-6" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </motion.svg>
+                        <span>Get My Recommendations</span>
+                      </motion.div>
+                    )}
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </Container>
       </div>
 
       {/* Main Content */}
       <Container>
         <div className="py-12">
-          <div className="max-w-4xl mx-auto">
-            {/* Recommendation Generator */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Get Your Personalized Recommendations</h2>
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-6">
-                  <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Our AI will analyze your profile and preferences to find the perfect Toyota for you.
-                  </p>
-                  {user?.finance?.budgetRange && (
-                    <div className="bg-white rounded-lg p-3 border border-gray-200">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Your Budget Range</h4>
-                      <div className="flex items-center space-x-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Min:</span>
-                          <span className="font-semibold text-green-600 ml-1">
-                            ${user.finance.budgetRange.min.toLocaleString()}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Max:</span>
-                          <span className="font-semibold text-green-600 ml-1">
-                            ${user.finance.budgetRange.max.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Get Recommendations Button */}
-                <div className="text-center">
-                  <Button 
-                    onClick={handleGetRecommendations}
-                    disabled={loading}
-                    className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    {loading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Getting Recommendations...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span>Get My Recommendations</span>
-                      </div>
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="max-w-full mx-auto px-4">
 
 
             {/* Error Display */}
             {error && (
-              <Card className="mb-8 border-red-200 bg-red-50">
-                <CardContent className="p-6">
-                  <div className="text-red-800">
-                    <h3 className="font-semibold mb-2">Error</h3>
-                    <p>{error}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+              >
+                <Card className="mb-8 border-red-200 bg-red-50">
+                  <CardContent className="p-6">
+                    <motion.div 
+                      className="text-red-800"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <h3 className="font-semibold mb-2">Error</h3>
+                      <p>{error}</p>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             )}
 
 
             {/* No Recommendations Message */}
             {recommendations && recommendations.length === 0 && (
-              <Card className="mb-8">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Recommendations Found</h3>
-                  <p className="text-gray-600 mb-4">
-                    We couldn't find any cars that match your current profile and preferences.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Try updating your profile or adjusting your preferences to get better matches.
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.6, type: "spring", stiffness: 150 }}
+              >
+                <Card className="mb-8">
+                  <CardContent className="p-6 text-center">
+                    <motion.div 
+                      className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.3, type: "spring", stiffness: 200 }}
+                    >
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709" />
+                      </svg>
+                    </motion.div>
+                    <motion.h3 
+                      className="text-xl font-semibold text-gray-900 mb-2"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      No Recommendations Found
+                    </motion.h3>
+                    <motion.p 
+                      className="text-gray-600 mb-4"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.7 }}
+                    >
+                      We couldn't find any cars that match your current profile and preferences.
+                    </motion.p>
+                    <motion.p 
+                      className="text-sm text-gray-500"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.9 }}
+                    >
+                      Try updating your profile or adjusting your preferences to get better matches.
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             )}
 
             {/* Recommendations Display */}
             {recommendations && recommendations.length > 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-2xl font-semibold text-gray-900">
-                        Your Personalized Recommendations
-                      </h3>
-                      <div className="flex items-center space-x-4">
-                        {recommendationResult && (
-                          <div className="text-sm text-gray-600">
-                            <span className="font-medium">{recommendationResult.filteredCars}</span> of{' '}
-                            <span className="font-medium">{recommendationResult.totalCarsAnalyzed}</span> cars match
-                          </div>
-                        )}
-                        <Button
-                          onClick={() => setShowAllResults(!showAllResults)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          {showAllResults ? 'Show Top 5' : 'Show All Results'}
-                        </Button>
-                      </div>
-                    </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card>
+                    <CardContent className="p-6">
+                      <motion.div 
+                        className="flex justify-between items-center mb-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                      >
+                        <h3 className="text-2xl font-semibold text-gray-900">
+                          Your Personalized Recommendations
+                        </h3>
+                        <div className="flex items-center space-x-4">
+                          {recommendationResult && (
+                            <motion.div 
+                              className="text-sm text-gray-600"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.6 }}
+                            >
+                              <span className="font-medium">{recommendationResult.filteredCars}</span> of{' '}
+                              <span className="font-medium">{recommendationResult.totalCarsAnalyzed}</span> cars match
+                            </motion.div>
+                          )}
+                          <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <Button
+                              onClick={() => setShowAllResults(!showAllResults)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              {showAllResults ? 'Show Top 5' : 'Show All Results'}
+                            </Button>
+                          </motion.div>
+                        </div>
+                      </motion.div>
 
                     {/* Results Summary */}
                     {recommendationResult && (
-                      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                          <div>
+                      <motion.div 
+                        className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.8 }}
+                      >
+                        <motion.div 
+                          className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.6, delay: 1.0 }}
+                        >
+                          <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.4, delay: 1.2 }}
+                          >
                             <div className="text-2xl font-bold text-green-700">{recommendations.length}</div>
                             <div className="text-sm text-green-600">Recommendations Found</div>
-                          </div>
-                          <div>
+                          </motion.div>
+                          <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.4, delay: 1.4 }}
+                          >
                             <div className="text-2xl font-bold text-blue-700">{recommendationResult.totalCarsAnalyzed}</div>
                             <div className="text-sm text-blue-600">Cars Analyzed</div>
-                          </div>
-                          <div>
+                          </motion.div>
+                          <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.4, delay: 1.6 }}
+                          >
                             <div className="text-2xl font-bold text-purple-700">
                               {recommendations.length > 0 ? Math.round(recommendations[0].similarityScore * 100) : 0}%
                             </div>
                             <div className="text-sm text-purple-600">Best Match Score</div>
-                          </div>
-                        </div>
+                          </motion.div>
+                        </motion.div>
                         
                         {/* Scoring Weights Info */}
-                        <div className="mt-4 pt-4 border-t border-gray-200">
+                        <motion.div 
+                          className="mt-4 pt-4 border-t border-gray-200"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.4, delay: 1.8 }}
+                        >
                           <div className="text-center">
                             <h4 className="text-sm font-semibold text-gray-700 mb-2">Scoring Weights</h4>
                             <div className="flex justify-center space-x-6 text-xs text-gray-600">
@@ -275,17 +480,33 @@ const RecommendationPage = () => {
                               <span>Location: <span className="font-semibold">10%</span></span>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
+                      </motion.div>
                     )}
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {(showAllResults ? recommendations : recommendations.slice(0, 5)).map((rec, index) => (
+                    <motion.div 
+                      className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 2.0 }}
+                    >
+                      {(showAllResults ? recommendations : recommendations.slice(0, 6)).map((rec, index) => (
                         <motion.div
                           key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ 
+                            duration: 0.5, 
+                            delay: 2.2 + (index * 0.1),
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15
+                          }}
+                          whileHover={{ 
+                            scale: 1.02,
+                            transition: { duration: 0.2 }
+                          }}
+                          className="mb-6"
                         >
                           <RecommendationCard 
                             recommendation={rec}
@@ -294,9 +515,10 @@ const RecommendationPage = () => {
                           />
                         </motion.div>
                       ))}
-                    </div>
+                    </motion.div>
                   </CardContent>
                 </Card>
+                </motion.div>
               </motion.div>
             )}
           </div>
