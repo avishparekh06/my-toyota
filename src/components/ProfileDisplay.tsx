@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Edit3, User, DollarSign, Car, MapPin, Users, Zap, Palette, Target, ChevronLeft } from 'lucide-react';
+import { Edit3, User, DollarSign, Car, MapPin, Users, Zap, Palette, Target, ChevronLeft, Phone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import UserUpdateForm from './UserUpdateForm';
 import { Button } from '@/components/ui/button';
@@ -174,6 +174,16 @@ const ProfileDisplay: React.FC = () => {
                         <p className="text-sm text-[var(--muted)]">Buying For</p>
                         <p className="font-medium text-[var(--text)]">
                           {personal.buyingFor || 'Not specified'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-[var(--muted)]" />
+                      <div>
+                        <p className="text-sm text-[var(--muted)]">Phone Number</p>
+                        <p className="font-medium text-[var(--text)]">
+                          {user.phone || 'Not specified'}
                         </p>
                       </div>
                     </div>

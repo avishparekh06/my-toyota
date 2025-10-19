@@ -7,6 +7,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   age?: number;
   location?: {
     city: string;
@@ -131,6 +132,7 @@ export const authApi = {
     lastName: string;
     email: string;
     password: string;
+    phone?: string;
     age?: number;
     location?: {
       city: string;

@@ -55,6 +55,7 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
     city: '',
     state: '',
     zip: '',
+    phone: '',
     featurePreferences: [] as string[],
     buildPreferences: [] as string[],
     modelPreferences: '',
@@ -84,6 +85,7 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
         city: user.location?.city || '',
         state: user.location?.state || '',
         zip: user.location?.zip || '',
+        phone: user.phone || '',
         featurePreferences: user.personal?.featurePreferences || [],
         buildPreferences: user.personal?.buildPreferences || [],
         modelPreferences: user.personal?.modelPreferences?.join(', ') || '',
@@ -172,6 +174,10 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
         zip: personalData.zip || undefined
       };
 
+      const phoneUpdate = {
+        phone: personalData.phone || undefined
+      };
+
       const financeUpdate = {
         householdIncome: parseNumberField(financeData.householdIncome),
         creditScore: parseNumberField(financeData.creditScore),
@@ -193,11 +199,15 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
       const cleanLocationUpdate = Object.fromEntries(
         Object.entries(locationUpdate).filter(([_, value]) => value !== undefined)
       );
+      const cleanPhoneUpdate = Object.fromEntries(
+        Object.entries(phoneUpdate).filter(([_, value]) => value !== undefined)
+      );
 
       await authApi.updateUserData(user._id, {
         personal: cleanPersonalUpdate,
         finance: cleanFinanceUpdate,
-        location: cleanLocationUpdate
+        location: cleanLocationUpdate,
+        ...cleanPhoneUpdate
       });
 
       // Refresh user data to get the latest information
@@ -264,6 +274,21 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
                   step="0.1"
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
                   placeholder="Daily commute distance"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-[var(--text)] mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={personalData.phone}
+                  onChange={handlePersonalChange}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                  placeholder="e.g., (555) 123-4567"
                 />
               </div>
 
