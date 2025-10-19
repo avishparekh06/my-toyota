@@ -5,11 +5,13 @@ import { VehiclesPage } from "@/routes/Vehicles"
 import { RecommendationPage } from "@/routes/Recommendation"
 import { UserProfilePage } from "@/routes/UserProfile"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { Navbar } from "@/components/Navbar"
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />

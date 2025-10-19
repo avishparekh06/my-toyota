@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Link, useNavigate } from "react-router-dom"
 import { Apple, Mail, Loader2 } from "lucide-react"
-import { Navbar } from "@/components/Navbar"
 import { Container } from "@/components/Container"
 import { PrimaryButton } from "@/components/PrimaryButton"
 import { Button } from "@/components/ui/button"
@@ -109,10 +108,8 @@ export function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
-      <Navbar />
-      
-      <div className="pt-16 min-h-screen">
+    <div className="min-h-screen bg-[var(--bg)] pt-[68px]">
+      <div className="min-h-screen">
         <Container className="py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-64px)]">
             {/* Left Marketing Panel */}

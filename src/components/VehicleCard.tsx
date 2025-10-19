@@ -49,9 +49,10 @@ interface Car {
 interface VehicleCardProps {
   car: Car
   className?: string
+  onViewDetails?: (car: Car) => void
 }
 
-export function VehicleCard({ car, className }: VehicleCardProps) {
+export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps) {
   const [selectedYear, setSelectedYear] = useState(car.year)
 
   const formatPrice = (price: number) => {
@@ -80,13 +81,27 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
     return car.images && car.images.length > 0 ? car.images[0] : null
   }
 
+  const handleCardClick = () => {
+    if (onViewDetails) {
+      onViewDetails(car)
+    }
+  }
+
+  const handleViewOptionsClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (onViewDetails) {
+      onViewDetails(car)
+    }
+  }
+
   return (
     <div
       className={cn(
         "group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] overflow-hidden",
-        "hover:border-[#EB0A1E]/20",
+        "hover:border-[#EB0A1E]/20 flex flex-col h-full cursor-pointer",
         className
       )}
+      onClick={handleCardClick}
     >
       {/* Car Image */}
       <div className="relative h-48 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
@@ -123,7 +138,7 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
       </div>
 
       {/* Card Content */}
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-grow">
         {/* Year Selector Tabs */}
         <div className="mb-4">
           <div className="flex space-x-1 bg-gray-50 rounded-xl p-1">
@@ -204,9 +219,12 @@ export function VehicleCard({ car, className }: VehicleCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3">
-          <button className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm">
-            View Options
+        <div className="space-y-3 mt-auto">
+          <button 
+            onClick={handleViewOptionsClick}
+            className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm"
+          >
+            View Details
           </button>
           <button className="w-full py-3 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25">
             Select Vehicle
