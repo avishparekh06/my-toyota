@@ -8,14 +8,6 @@ import { ProfileIcon } from "@/components/Icon"
 import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
 
-// Try to import Toyota logo, fallback to text
-let ToyotaLogo: React.ComponentType<{ className?: string }> | null = null
-try {
-  ToyotaLogo = require("@/assets/toyota-logo.svg").default
-} catch {
-  // Logo not found, will use text fallback
-}
-
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -36,34 +28,20 @@ export function Navbar() {
         scrolled && "bg-white/98 shadow-lg shadow-black/5"
       )}
     >
-      <Container>
-        <div className="flex h-full items-center justify-between">
-          {/* Toyota Logo + MyToyota */}
-          <div className="flex items-center space-x-4 pl-2">
-            {/* Official Toyota Logo */}
-            <div className="flex items-center space-x-3">
-              {/* Red Square with White Emblem */}
-              <div className="w-8 h-8 bg-[var(--accent)] rounded-sm flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10 2C8.5 2 7.5 3 7.5 4.5C7.5 6 8.5 7 10 7C11.5 7 12.5 6 12.5 4.5C12.5 3 11.5 2 10 2Z" fill="white"/>
-                  <path d="M10 13C8.5 13 7.5 14 7.5 15.5C7.5 17 8.5 18 10 18C11.5 18 12.5 17 12.5 15.5C12.5 14 11.5 13 10 13Z" fill="white"/>
-                  <ellipse cx="10" cy="10" rx="8" ry="3" fill="none" stroke="white" strokeWidth="1.5"/>
-                </svg>
-              </div>
-              {/* TOYOTA Wordmark */}
-              <span className="font-bold text-lg tracking-tight text-black">
-                TOYOTA
-              </span>
-            </div>
-            {/* MyToyota Brand */}
-            <div className="h-6 w-px bg-gray-300"></div>
-            <span className="font-semibold text-xl tracking-tight text-[var(--accent)]">
-              MyToyota
-            </span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+      <div className="flex h-full items-center justify-between px-4">
+        {/* Toyota Logo - Left side */}
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/images/logos/images.png" 
+            alt="Toyota Logo" 
+            className="h-16 w-auto"
+          />
+        </Link>
+        
+        {/* All navigation elements - Right side */}
+        <div className="flex items-center space-x-6">
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center space-x-6">
             <Link
               to="/vehicles"
               className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
@@ -90,8 +68,8 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Right Side - Desktop */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <>
                 <Link to="/profile">
@@ -112,14 +90,10 @@ export function Navbar() {
               </>
             ) : (
               <>
+                {/* Profile Icon */}
                 <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200">
                   <ProfileIcon className="text-gray-700" />
                 </button>
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                    Log in
-                  </Button>
-                </Link>
                 <Link to="/auth">
                   <PrimaryButton size="sm" className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
                     Create account
@@ -142,79 +116,74 @@ export function Navbar() {
             )}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden absolute top-[68px] left-0 right-0 bg-white/98 backdrop-blur-sm border-b border-gray-200/50 shadow-lg shadow-black/5">
-            <div className="px-4 py-6 space-y-4">
-              <Link
-                to="/vehicles"
-                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Vehicles
-              </Link>
-              <Link
-                to="/recommendations"
-                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Recommendations
-              </Link>
-              <Link
-                to="/#shopping"
-                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Shopping
-              </Link>
-              <Link
-                to="/#owners"
-                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Owners
-              </Link>
-              <div className="pt-4 border-t border-[var(--border)] space-y-3">
-                {isAuthenticated ? (
-                  <>
-                    <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start flex items-center space-x-2">
-                        <User className="h-4 w-4" />
-                        <span>Profile ({user?.firstName})</span>
-                      </Button>
-                    </Link>
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => {
-                        logout();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full justify-start flex items-center space-x-2"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Logout</span>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-[68px] left-0 right-0 bg-white/98 backdrop-blur-sm border-b border-gray-200/50 shadow-lg shadow-black/5">
+          <div className="px-4 py-6 space-y-4">
+            <Link
+              to="/vehicles"
+              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Vehicles
+            </Link>
+            <Link
+              to="/recommendations"
+              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Recommendations
+            </Link>
+            <Link
+              to="/#shopping"
+              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Shopping
+            </Link>
+            <Link
+              to="/#owners"
+              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Owners
+            </Link>
+            <div className="pt-4 border-t border-[var(--border)] space-y-3">
+              {isAuthenticated ? (
+                <>
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>Profile ({user?.firstName})</span>
                     </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start">
-                        Log in
-                      </Button>
-                    </Link>
-                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                      <PrimaryButton className="w-full rounded-full">
-                        Create account
-                      </PrimaryButton>
-                    </Link>
-                  </>
-                )}
-              </div>
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-start flex items-center space-x-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <PrimaryButton className="w-full rounded-full">
+                      Create account
+                    </PrimaryButton>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
-        )}
-      </Container>
+        </div>
+      )}
     </nav>
   )
 }

@@ -50,7 +50,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-[var(--border)]">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-[var(--muted)]">
-              © 2024 Toyota Motor Sales, U.S.A., Inc. All rights reserved.
+              © 2025 Toyota Motor Sales, U.S.A., Inc. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
               <Link to="/privacy" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">

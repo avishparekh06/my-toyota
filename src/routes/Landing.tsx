@@ -147,9 +147,6 @@ export function LandingPage() {
                 </Button>
               </Link>
             </div>
-            <p className="text-white/70 text-sm mt-6">
-              Prototype UI — figures are illustrative only.
-            </p>
           </motion.div>
         </Container>
       </section>
