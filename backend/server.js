@@ -60,6 +60,7 @@ process.on('SIGINT', async () => {
 // Routes
 app.use('/api/cars', require('./routes/cars'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/user-plans', require('./routes/userPlans'));
 
 // Health check endpoint for production monitoring
 app.get('/api/health', (req, res) => {

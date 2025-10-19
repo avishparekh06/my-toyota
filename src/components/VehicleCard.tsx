@@ -124,17 +124,15 @@ export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps)
             </div>
           </div>
         )}
-        {/* Status Badge */}
-        <div className="absolute top-3 right-3">
-          <span className={cn(
-            "px-2 py-1 text-xs font-semibold rounded-full",
-            car.status === "In Stock" 
-              ? "bg-green-100 text-green-800" 
-              : "bg-yellow-100 text-yellow-800"
-          )}>
-            {car.status}
-          </span>
-        </div>
+        
+        {/* AWD Badge - positioned as overlay on image */}
+        {getBadge() && (
+          <div className="absolute top-3 left-3">
+            <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-[#EB0A1E] bg-white/90 backdrop-blur-sm rounded-full border border-red-100 shadow-sm">
+              {getBadge()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Card Content */}
@@ -172,13 +170,6 @@ export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps)
           <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
             {getVehicleName()}
           </h3>
-          
-          {/* Badge */}
-          {getBadge() && (
-            <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-[#EB0A1E] bg-red-50 rounded-full border border-red-100">
-              {getBadge()}
-            </span>
-          )}
         </div>
 
         {/* Vehicle Details */}

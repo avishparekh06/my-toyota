@@ -241,7 +241,57 @@ const userSchema = new mongoose.Schema({
       type: String,
       default: 'gemini-1.5-flash'
     }
-  }
+  },
+  // Favorited plans array - simplified structure
+  favoritedPlans: [{
+    planId: {
+      type: String,
+      required: true
+    },
+    planType: {
+      type: String,
+      required: true
+    },
+    planName: {
+      type: String,
+      required: true
+    },
+    term: String,
+    downPayment: Number,
+    monthlyPayment: Number,
+    milesPerYear: String,
+    residualValue: Number,
+    apr: Number,
+    description: String,
+    features: [String],
+    requirements: [String],
+    totalAmount: Number,
+    isRecommended: Boolean,
+    car: {
+      id: String,
+      make: String,
+      model: String,
+      year: Number,
+      trim: String,
+      msrp: Number,
+      dealerPrice: Number,
+      location: {
+        city: String,
+        state: String
+      }
+    },
+    financialInputs: {
+      creditScore: String,
+      annualIncome: String,
+      downPayment: String,
+      preferredTerm: String,
+      monthlyBudget: String
+    },
+    favoritedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 });
 
 // Custom validation for budget range

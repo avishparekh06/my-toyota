@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { VehicleCard } from '@/components/VehicleCard'
 import { CarDetailModal } from '@/components/CarDetailModal'
 import { carsApi } from '@/services/api'
@@ -61,10 +62,12 @@ interface CarsResponse {
 
 export function VehiclesPage() {
   const [cars, setCars] = useState<Car[]>([])
+  const [filteredCars, setFilteredCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedCar, setSelectedCar] = useState<Car | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedBodyStyle, setSelectedBodyStyle] = useState<string>('All')
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -74,6 +77,7 @@ export function VehiclesPage() {
         const response = await carsApi.getCars({ limit: 50 }) as CarsResponse
         if (response.success) {
           setCars(response.data)
+          setFilteredCars(response.data)
         } else {
           setError('Failed to fetch vehicles')
         }
@@ -88,6 +92,19 @@ export function VehiclesPage() {
     fetchCars()
   }, [])
 
+  // Filter cars by body style
+  useEffect(() => {
+    if (selectedBodyStyle === 'All') {
+      setFilteredCars(cars)
+    } else {
+      const filtered = cars.filter(car => car.bodyStyle === selectedBodyStyle)
+      setFilteredCars(filtered)
+    }
+  }, [selectedBodyStyle, cars])
+
+  // Get unique body styles for filter options
+  const bodyStyles = ['All', ...new Set(cars.map(car => car.bodyStyle))]
+
   const handleViewDetails = (car: Car) => {
     setSelectedCar(car)
     setIsModalOpen(true)
@@ -101,10 +118,38 @@ export function VehiclesPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">Vehicles</h1>
-            <p className="mt-2 text-gray-600">Explore our lineup of Toyota vehicles</p>
+        <div className="bg-white border-b border-gray-200 border-l-4 border-l-[#EB0A1E]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <motion.h1 
+              className="text-6xl font-bold text-gray-900 mb-2"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <motion.span 
+                className="text-[#EB0A1E]"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              >
+                Toyota
+              </motion.span> 
+              <motion.span
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              >
+                Vehicles
+              </motion.span>
+            </motion.h1>
+            <motion.p 
+              className="text-xl text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+            >
+              Explore our lineup of Toyota vehicles
+            </motion.p>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -145,10 +190,38 @@ export function VehiclesPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">Vehicles</h1>
-            <p className="mt-2 text-gray-600">Explore our lineup of Toyota vehicles</p>
+        <div className="bg-white border-b border-gray-200 border-l-4 border-l-[#EB0A1E]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <motion.h1 
+              className="text-6xl font-bold text-gray-900 mb-2"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <motion.span 
+                className="text-[#EB0A1E]"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              >
+                Toyota
+              </motion.span> 
+              <motion.span
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              >
+                Vehicles
+              </motion.span>
+            </motion.h1>
+            <motion.p 
+              className="text-xl text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+            >
+              Explore our lineup of Toyota vehicles
+            </motion.p>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -170,35 +243,145 @@ export function VehiclesPage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5] pt-[68px]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 border-l-4 border-l-[#EB0A1E]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <motion.h1 
+            className="text-6xl font-bold text-gray-900 mb-2"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <motion.span 
+              className="text-[#EB0A1E]"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            >
+              Toyota
+            </motion.span> 
+            <motion.span
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            >
+              Vehicles
+            </motion.span>
+          </motion.h1>
+          <motion.p 
+            className="text-xl text-gray-600"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+          >
+            Explore our lineup of Toyota vehicles
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Filter Section */}
+      <div className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Vehicles</h1>
-          <p className="mt-2 text-gray-600">Explore our lineup of Toyota vehicles</p>
+          <motion.div 
+            className="flex items-center justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <div className="flex items-center space-x-4">
+              <label htmlFor="bodyStyleFilter" className="text-sm font-medium text-gray-700">
+                Filter by Body Style:
+              </label>
+              <motion.select
+                id="bodyStyleFilter"
+                value={selectedBodyStyle}
+                onChange={(e) => setSelectedBodyStyle(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]/20 focus:border-[#EB0A1E] bg-white transition-all duration-200"
+                whileFocus={{ scale: 1.02 }}
+              >
+                {bodyStyles.map((style) => (
+                  <option key={style} value={style}>
+                    {style}
+                  </option>
+                ))}
+              </motion.select>
+            </div>
+            <motion.div 
+              className="text-sm text-gray-600"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 1.0 }}
+            >
+              Showing {filteredCars.length} of {cars.length} vehicles
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
       {/* Vehicle Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {cars.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        {filteredCars.length === 0 ? (
+          <motion.div 
+            className="text-center py-16"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <motion.div 
+              className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4, type: "spring", stiffness: 200 }}
+            >
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709" />
               </svg>
-            </div>
-            <div className="text-gray-500 text-lg font-medium mb-2">No Vehicles Found</div>
-            <p className="text-gray-600">No vehicles are currently available.</p>
-          </div>
+            </motion.div>
+            <motion.div 
+              className="text-gray-500 text-lg font-medium mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              No Vehicles Found
+            </motion.div>
+            <motion.p 
+              className="text-gray-600"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.8 }}
+            >
+              No vehicles are currently available.
+            </motion.p>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {cars.map((car) => (
-              <VehicleCard 
-                key={car._id} 
-                car={car}
-                onViewDetails={handleViewDetails}
-              />
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            {filteredCars.map((car, index) => (
+              <motion.div
+                key={car._id}
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: 0.4 + (index * 0.1),
+                  ease: "easeOut"
+                }}
+                whileHover={{ 
+                  y: -5,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <VehicleCard 
+                  car={car}
+                  onViewDetails={handleViewDetails}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
 

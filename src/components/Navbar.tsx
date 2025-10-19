@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import { Menu, X, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PrimaryButton } from "@/components/PrimaryButton"
-import { Container } from "@/components/Container"
 import { ProfileIcon } from "@/components/Icon"
 import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
@@ -61,12 +60,6 @@ export function Navbar() {
               className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
             >
               Plans
-            </Link>
-            <Link
-              to="/#shopping"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Shopping
             </Link>
           </div>
 
@@ -146,13 +139,6 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Plans
-            </Link>
-            <Link
-              to="/#shopping"
-              className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping
             </Link>
             <div className="pt-4 border-t border-[var(--border)] space-y-3">
               {isAuthenticated ? (

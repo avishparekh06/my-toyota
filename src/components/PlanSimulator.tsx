@@ -45,7 +45,15 @@ interface FinancingPlan {
 }
 
 const PlanSimulator: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  
+  // Debug user authentication
+  useEffect(() => {
+    console.log('PlanSimulator - User auth status:', { 
+      isAuthenticated, 
+      user: user ? { id: user._id, name: user.firstName } : null 
+    });
+  }, [user, isAuthenticated]);
   const { selectedCar: contextCar } = useCar();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -63,6 +71,8 @@ const PlanSimulator: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const plansPerPage = 4;
   const [selectedPlanType, setSelectedPlanType] = useState<'Finance' | 'Lease'>('Finance');
+  const [favoritedPlans, setFavoritedPlans] = useState<Set<string>>(new Set());
+  const [savingPlan, setSavingPlan] = useState<string | null>(null);
 
   // Load car data from context or URL parameters
   useEffect(() => {
@@ -316,6 +326,149 @@ const PlanSimulator: React.FC = () => {
     }
   };
 
+  const savePlanAsFavorite = async (plan: FinancingPlan) => {
+    if (!user || !selectedCar) {
+      console.log('Missing user or selectedCar:', { user: !!user, selectedCar: !!selectedCar });
+      return;
+    }
+    
+    if (!isAuthenticated) {
+      console.log('User not authenticated');
+      alert('Please log in to save plans');
+      return;
+    }
+    
+    console.log('Attempting to save plan:', { 
+      userId: user._id, 
+      userIdType: typeof user._id,
+      userIdLength: user._id?.length,
+      planId: plan.id, 
+      carId: selectedCar.id,
+      userObject: user
+    });
+    
+    // Validate user ID format
+    if (!user._id || typeof user._id !== 'string' || user._id.length !== 24) {
+      console.error('Invalid user ID format:', user._id);
+      alert('Invalid user ID format. Please log out and log back in.');
+      return;
+    }
+    
+    setSavingPlan(plan.id);
+    
+    try {
+      // Generate car ID if it doesn't exist
+      const carId = selectedCar.id || `${selectedCar.year}-${selectedCar.make}-${selectedCar.model}-${selectedCar.trim || 'base'}`.replace(/\s+/g, '-').toLowerCase();
+      
+      const newFavoritedPlan = {
+        planId: plan.id,
+        planType: plan.type,
+        planName: plan.name,
+        term: plan.term,
+        downPayment: Number(plan.downPayment),
+        monthlyPayment: Number(plan.monthlyPayment),
+        milesPerYear: plan.milesPerYear || 'Unlimited',
+        residualValue: Number(plan.residualValue || 0),
+        apr: Number(plan.apr),
+        description: plan.description || '',
+        features: plan.features || [],
+        requirements: plan.requirements || [],
+        totalAmount: Number(plan.totalAmount),
+        isRecommended: Boolean(plan.isRecommended || false),
+        car: {
+          id: carId,
+          make: selectedCar.make,
+          model: selectedCar.model,
+          year: Number(selectedCar.year),
+          trim: selectedCar.trim || '',
+          msrp: Number(selectedCar.msrp),
+          dealerPrice: Number(selectedCar.dealerPrice),
+          location: {
+            city: selectedCar.location?.city || '',
+            state: selectedCar.location?.state || ''
+          }
+        },
+        financialInputs: {
+          creditScore: String(financialInfo.creditScore),
+          annualIncome: String(financialInfo.annualIncome),
+          downPayment: String(financialInfo.downPayment),
+          preferredTerm: String(financialInfo.preferredTerm),
+          monthlyBudget: String(financialInfo.monthlyBudget)
+        },
+        favoritedAt: new Date()
+      };
+      
+      console.log('New favorited plan to add:', JSON.stringify(newFavoritedPlan, null, 2));
+      console.log('Plan object:', JSON.stringify(plan, null, 2));
+      console.log('Selected car object:', JSON.stringify(selectedCar, null, 2));
+      
+      // Validate required fields with detailed logging
+      const missingFields = [];
+      if (!plan.id) missingFields.push('plan.id');
+      if (!plan.type) missingFields.push('plan.type');
+      if (!plan.name) missingFields.push('plan.name');
+      if (!carId) missingFields.push('carId (generated)');
+      if (!selectedCar.make) missingFields.push('selectedCar.make');
+      if (!selectedCar.model) missingFields.push('selectedCar.model');
+      
+      if (missingFields.length > 0) {
+        console.error('Missing required fields for plan saving:', missingFields);
+        console.log('Plan data:', plan);
+        console.log('Car data:', selectedCar);
+        alert(`Missing required fields: ${missingFields.join(', ')}. Please try again.`);
+        return;
+      }
+      
+      // Use the same pattern as profile updates - update the user document directly
+      const response = await fetch(`http://localhost:5001/api/users/${user._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({
+          favoritedPlans: {
+            $push: newFavoritedPlan
+          }
+        }),
+      });
+
+      console.log('Save response status:', response.status);
+      console.log('Save response headers:', Object.fromEntries(response.headers.entries()));
+      
+      if (response.ok) {
+        try {
+          const result = await response.json();
+          console.log('Plan saved successfully:', result);
+          setFavoritedPlans(prev => new Set([...prev, plan.id]));
+          alert('Plan saved successfully!');
+        } catch (jsonError) {
+          console.error('Error parsing JSON response:', jsonError);
+          alert('Plan saved successfully! (Response received but couldn\'t parse JSON)');
+          setFavoritedPlans(prev => new Set([...prev, plan.id]));
+        }
+      } else {
+        try {
+          const errorData = await response.json();
+          console.error('Error saving plan:', errorData);
+          alert(`Error saving plan: ${errorData.message || errorData.error || 'Unknown error'}`);
+        } catch (jsonError) {
+          console.error('Error parsing error response:', jsonError);
+          alert(`Error saving plan: HTTP ${response.status} - ${response.statusText}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving plan:', error);
+      alert(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setSavingPlan(null);
+    }
+  };
+
+  const isPlanFavorited = (planId: string): boolean => {
+    return favoritedPlans.has(planId);
+  };
+
 
 
   // If no car is selected, redirect to recommendations
@@ -520,9 +673,9 @@ const PlanSimulator: React.FC = () => {
               </div>
 
               {/* Results Section */}
-              <div className="p-6 bg-white rounded-b-2xl">
+              <div className="p-6 bg-white rounded-b-2xl h-[600px] flex flex-col">
                 {showResults ? (
-                  <div className="flex flex-col">
+                  <div className="flex flex-col h-full">
                     {/* Plan Type Toggle - Moved up with tighter padding */}
                     <div className="mb-2">
                       <div className="flex items-center justify-between">
@@ -573,7 +726,7 @@ const PlanSimulator: React.FC = () => {
                     </h3>
                     
                     {/* Plans Display */}
-                    <div className="space-y-4 pb-4">
+                    <div className="space-y-4 pb-4 flex-1 overflow-y-auto">
                         {filteredPlans
                           .slice(currentPage * plansPerPage, (currentPage + 1) * plansPerPage)
                           .map((plan) => {
@@ -596,12 +749,46 @@ const PlanSimulator: React.FC = () => {
                                     </span>
                                   )}
                                 </div>
-                                <div className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
-                                  affordability === 'Affordable' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
-                                  affordability === 'Over Budget' ? 'bg-red-100 text-red-700 border border-red-200' : 
-                                  'bg-amber-100 text-amber-700 border border-amber-200'
-                                }`}>
-                                  {affordability === 'Affordable' ? 'Available' : affordability === 'Over Budget' ? 'Over Budget' : 'Pending'}
+                                <div className="flex items-center space-x-2">
+                                  <div className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
+                                    affordability === 'Affordable' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 
+                                    affordability === 'Over Budget' ? 'bg-red-100 text-red-700 border border-red-200' : 
+                                    'bg-amber-100 text-amber-700 border border-amber-200'
+                                  }`}>
+                                    {affordability === 'Affordable' ? 'Available' : affordability === 'Over Budget' ? 'Over Budget' : 'Pending'}
+                                  </div>
+                                  {isAuthenticated ? (
+                                    <button
+                                      onClick={() => savePlanAsFavorite(plan)}
+                                      disabled={savingPlan === plan.id || isPlanFavorited(plan.id)}
+                                      className={`p-2 rounded-lg transition-all duration-200 ${
+                                        isPlanFavorited(plan.id)
+                                          ? 'bg-[#EB0A1E] text-white'
+                                          : 'bg-gray-100 text-gray-400 hover:bg-[#EB0A1E]/10 hover:text-[#EB0A1E]'
+                                      } ${savingPlan === plan.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                      title={isPlanFavorited(plan.id) ? 'Plan saved' : 'Save plan'}
+                                    >
+                                      {savingPlan === plan.id ? (
+                                        <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-4 h-4" fill={isPlanFavorited(plan.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                      )}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => navigate('/auth')}
+                                      className="p-2 rounded-lg bg-gray-100 text-gray-400 hover:bg-gray-200 transition-all duration-200 cursor-pointer"
+                                      title="Login to save plans"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                      </svg>
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                               
@@ -640,7 +827,7 @@ const PlanSimulator: React.FC = () => {
                     
                     {/* Bottom Pagination - Small Red Numbered Circles */}
                     {filteredPlans.length > plansPerPage && (
-                      <div className="flex justify-center items-center space-x-2 mt-4">
+                      <div className="flex justify-center items-center space-x-2 mt-auto pt-4">
                         {Array.from({ length: Math.ceil(filteredPlans.length / plansPerPage) }, (_, i) => (
                           <button
                             key={i}
