@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
@@ -287,10 +288,13 @@ const RecommendationPage = () => {
 
                             {/* Action Buttons */}
                             <div className="space-y-2">
+                              <Link 
+                                to={`/plans?car=${encodeURIComponent(JSON.stringify(rec.car))}`}
+                                className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 block text-center"
+                              >
+                                Explore Financial Plans
+                              </Link>
                               <button className="w-full py-2.5 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
-                                View Details
-                              </button>
-                              <button className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200">
                                 Contact Dealer
                               </button>
                             </div>

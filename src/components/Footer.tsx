@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="bg-[var(--surface)] border-t border-[var(--border)]">
       <Container className="py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
             <h3 className="font-semibold text-[var(--text)]">Vehicles</h3>
             <ul className="space-y-2 text-sm">
@@ -23,16 +23,6 @@ export function Footer() {
               <li><Link to="/#inventory" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Find Inventory</Link></li>
               <li><Link to="/#financing" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Financing</Link></li>
               <li><Link to="/#trade" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Trade-In Value</Link></li>
-            </ul>
-          </div>
-          
-          <div className="space-y-4">
-            <h3 className="font-semibold text-[var(--text)]">Owners</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/#my-toyota" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">My Toyota</Link></li>
-              <li><Link to="/#service" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Service</Link></li>
-              <li><Link to="/#warranty" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Warranty</Link></li>
-              <li><Link to="/#recalls" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Recalls</Link></li>
             </ul>
           </div>
           

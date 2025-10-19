@@ -8,13 +8,7 @@ import { ProfileIcon } from "@/components/Icon"
 import { useAuth } from "@/contexts/AuthContext"
 import { cn } from "@/lib/utils"
 
-// Try to import Toyota logo, fallback to text
-let ToyotaLogo: React.ComponentType<{ className?: string }> | null = null
-try {
-  ToyotaLogo = require("@/assets/toyota-logo.svg").default
-} catch {
-  // Logo not found, will use text fallback
-}
+// Toyota logo import removed - using SVG icon instead
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -77,16 +71,16 @@ export function Navbar() {
               Recommendations
             </Link>
             <Link
+              to="/plans"
+              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
+            >
+              Plans
+            </Link>
+            <Link
               to="/#shopping"
               className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
             >
               Shopping
-            </Link>
-            <Link
-              to="/#owners"
-              className="font-medium text-gray-800 hover:text-[var(--accent)] transition-colors duration-200 hover:underline underline-offset-8"
-            >
-              Owners
             </Link>
           </div>
 
@@ -121,7 +115,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link to="/auth">
-                  <PrimaryButton size="sm" className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
+                  <PrimaryButton className="rounded-full px-6 py-2 font-medium shadow-sm hover:shadow-md transition-all duration-200">
                     Create account
                   </PrimaryButton>
                 </Link>
@@ -162,18 +156,18 @@ export function Navbar() {
                 Recommendations
               </Link>
               <Link
+                to="/plans"
+                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Plans
+              </Link>
+              <Link
                 to="/#shopping"
                 className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Shopping
-              </Link>
-              <Link
-                to="/#owners"
-                className="block font-medium text-[var(--text)] hover:text-[var(--accent)] transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Owners
               </Link>
               <div className="pt-4 border-t border-[var(--border)] space-y-3">
                 {isAuthenticated ? (

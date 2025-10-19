@@ -4,6 +4,7 @@ import { AuthPage } from "@/routes/Auth"
 import { VehiclesPage } from "@/routes/Vehicles"
 import { RecommendationPage } from "@/routes/Recommendation"
 import { UserProfilePage } from "@/routes/UserProfile"
+import { PlanSimulatorPage } from "@/routes/PlanSimulator"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { Navbar } from "@/components/Navbar"
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/vehicles" element={<VehiclesPage />} />
           <Route path="/recommendations" element={<RecommendationPage />} />
+          <Route path="/plans" element={<PlanSimulatorPage />} />
           <Route path="/profile" element={<UserProfilePage />} />
         </Routes>
       </Router>
