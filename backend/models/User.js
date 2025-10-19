@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({
   location: {
     city: { type: String, trim: true },
     state: { type: String, trim: true },
+    zip: { type: String, trim: true },
     country: { type: String, trim: true, default: 'USA' }
   },
   // New nested objects for personal and financial information
@@ -85,7 +86,17 @@ const userSchema = new mongoose.Schema({
     },
     financingPriorities: [{
       type: String
-    }]
+    }],
+    budgetRange: {
+      min: {
+        type: Number,
+        min: 0
+      },
+      max: {
+        type: Number,
+        min: 0
+      }
+    }
   },
   // Keep existing fields for backward compatibility
   employmentStatus: {
@@ -217,7 +228,31 @@ const userSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  // Embedding storage for RAG recommendations
+  embedding: {
+    vector: [Number], // The actual embedding vector
+    profileText: String, // The text used to generate the embedding
+    generatedAt: {
+      type: Date,
+      default: Date.now
+    },
+    model: {
+      type: String,
+      default: 'gemini-1.5-flash'
+    }
   }
+});
+
+// Custom validation for budget range
+userSchema.pre('save', function(next) {
+  if (this.finance && this.finance.budgetRange) {
+    const { min, max } = this.finance.budgetRange;
+    if (min !== undefined && max !== undefined && min >= max) {
+      return next(new Error('Budget range max must be greater than min'));
+    }
+  }
+  next();
 });
 
 // Hash password before saving
@@ -254,5 +289,38 @@ userSchema.methods.getPublicProfile = function() {
 // Create indexes for better performance
 userSchema.index({ email: 1 });
 userSchema.index({ 'location.city': 1, 'location.state': 1 });
+
+// Method to check if user embedding needs regeneration
+userSchema.methods.needsEmbeddingRegeneration = function() {
+  return !this.embedding || 
+         !this.embedding.vector || 
+         this.embedding.vector.length === 0 ||
+         !this.embedding.generatedAt ||
+         (Date.now() - this.embedding.generatedAt.getTime()) > (30 * 24 * 60 * 60 * 1000); // 30 days
+};
+
+// Method to get user embedding or null if not available
+userSchema.methods.getEmbedding = function() {
+  if (this.embedding && this.embedding.vector && this.embedding.vector.length > 0) {
+    return {
+      userId: this._id.toString(),
+      profileText: this.embedding.profileText,
+      embedding: this.embedding.vector,
+      budget: this.finance?.budgetRange || { min: 25000, max: 75000 },
+      location: this.location
+    };
+  }
+  return null;
+};
+
+// Method to check if user profile has changed since last embedding generation
+userSchema.methods.hasProfileChanged = function() {
+  if (!this.embedding || !this.embedding.generatedAt) {
+    return true; // No embedding exists, needs generation
+  }
+  
+  // Check if profile was updated after embedding generation
+  return this.updatedAt > this.embedding.generatedAt;
+};
 
 module.exports = mongoose.model('User', userSchema);

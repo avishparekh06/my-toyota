@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const ProfileDisplay: React.FC = () => {
   const { user, isLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  // Component is working properly now
 
   if (isLoading) {
     return (
@@ -52,7 +51,7 @@ const ProfileDisplay: React.FC = () => {
               setIsEditing(false);
             }}
             onError={(error) => {
-              console.error('Error updating profile:', error);
+              // Handle error silently or show user-friendly message
             }}
           />
         </div>
@@ -80,7 +79,7 @@ const ProfileDisplay: React.FC = () => {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg)', position: 'relative' }}>
       <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '24px', paddingTop: '100px', position: 'relative', zIndex: 0 }}>
-        {/* Header - Simple test */}
+        {/* Header */}
         <div style={{
           background: 'linear-gradient(to right, #EB0A1E, #CF0A19)',
           borderRadius: '12px',
@@ -162,7 +161,9 @@ const ProfileDisplay: React.FC = () => {
                       <div>
                         <p className="text-sm text-[var(--muted)]">Location</p>
                         <p className="font-medium text-[var(--text)]">
-                          {personal.location || 'Not specified'}
+                          {user.location?.city && user.location?.state 
+                            ? `${user.location.city}, ${user.location.state}${user.location.zip ? ` ${user.location.zip}` : ''}`
+                            : 'Not specified'}
                         </p>
                       </div>
                     </div>
@@ -268,6 +269,55 @@ const ProfileDisplay: React.FC = () => {
                       </span>
                     </div>
                   )}
+
+                  <div className="border-t border-[var(--border)] pt-4">
+                    <p className="text-sm text-[var(--muted)] mb-3">Budget Range</p>
+                    {finance.budgetRange && finance.budgetRange.min && finance.budgetRange.max ? (
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-center">
+                            <p className="text-xs text-[var(--muted)] mb-1">Minimum</p>
+                            <p className="text-lg font-bold text-green-600">
+                              ${finance.budgetRange.min.toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-[var(--muted)] mb-1">Maximum</p>
+                            <p className="text-lg font-bold text-green-600">
+                              ${finance.budgetRange.max.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                          <div 
+                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: '100%',
+                              background: `linear-gradient(to right, 
+                                #10b981 0%, 
+                                #10b981 ${((finance.budgetRange.min - 15000) / (100000 - 15000)) * 100}%, 
+                                #3b82f6 ${((finance.budgetRange.min - 15000) / (100000 - 15000)) * 100}%, 
+                                #3b82f6 ${((finance.budgetRange.max - 15000) / (100000 - 15000)) * 100}%, 
+                                #e5e7eb ${((finance.budgetRange.max - 15000) / (100000 - 15000)) * 100}%, 
+                                #e5e7eb 100%)`
+                            }}
+                          ></div>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-[var(--muted)]">
+                            Range: ${(finance.budgetRange.max - finance.budgetRange.min).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-[var(--muted)] mb-2">No budget range set</p>
+                        <p className="text-xs text-[var(--muted)]">
+                          Set your budget range in the profile setup or edit form
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

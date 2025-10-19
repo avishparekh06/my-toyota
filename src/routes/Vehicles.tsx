@@ -78,7 +78,7 @@ export function VehiclesPage() {
           setError('Failed to fetch vehicles')
         }
       } catch (err) {
-        console.error('Error fetching cars:', err)
+        // Error fetching cars
         setError(err instanceof Error ? err.message : 'Failed to fetch vehicles')
       } finally {
         setLoading(false)

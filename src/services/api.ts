@@ -11,6 +11,7 @@ export interface User {
   location?: {
     city: string;
     state: string;
+    zip: string;
     country: string;
   };
   personal?: {
@@ -31,6 +32,10 @@ export interface User {
     financeOrLease?: 'Finance' | 'Lease';
     employmentStatus?: 'Employed' | 'Self-Employed' | 'Unemployed' | 'Retired' | 'Student';
     financingPriorities?: string[];
+    budgetRange?: {
+      min: number;
+      max: number;
+    };
   };
   employmentStatus?: string;
   annualIncome?: number;
@@ -187,7 +192,7 @@ export const authApi = {
   },
 
   // Update user personal and finance data
-  updateUserData: async (userId: string, data: { personal?: Partial<User['personal']>; finance?: Partial<User['finance']> }): Promise<{ success: boolean; data: User; message: string }> => {
+  updateUserData: async (userId: string, data: { personal?: Partial<User['personal']>; finance?: Partial<User['finance']>; location?: Partial<User['location']> }): Promise<{ success: boolean; data: User; message: string }> => {
     return apiRequest<{ success: boolean; data: User; message: string }>(`/users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -215,6 +220,23 @@ export const authApi = {
   // Get current token
   getToken: (): string | null => {
     return getAuthToken();
+  },
+
+  // Get user embeddings for RAG system
+  getUserEmbeddings: async () => {
+    return apiRequest('/users/embeddings');
+  },
+
+  // Generate embedding for a specific user
+  generateUserEmbedding: async (userId: string) => {
+    return apiRequest(`/users/${userId}/generate-embedding`, {
+      method: 'POST',
+    });
+  },
+
+  // Get user embedding status
+  getUserEmbeddingStatus: async () => {
+    return apiRequest('/users/embedding-status');
   },
 };
 
@@ -256,6 +278,30 @@ export const carsApi = {
   // Search cars
   searchCars: async (query: string) => {
     return apiRequest(`/cars/search/${encodeURIComponent(query)}`);
+  },
+
+  // Get car embeddings for RAG system
+  getCarEmbeddings: async () => {
+    return apiRequest('/cars/embeddings');
+  },
+
+  // Generate embedding for a specific car
+  generateCarEmbedding: async (carId: string) => {
+    return apiRequest(`/cars/${carId}/generate-embedding`, {
+      method: 'POST',
+    });
+  },
+
+  // Regenerate embeddings for all cars
+  regenerateAllEmbeddings: async () => {
+    return apiRequest('/cars/regenerate-embeddings', {
+      method: 'POST',
+    });
+  },
+
+  // Get embedding status
+  getEmbeddingStatus: async () => {
+    return apiRequest('/cars/embedding-status');
   },
 };
 

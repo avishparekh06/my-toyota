@@ -10,6 +10,7 @@ interface AuthContextType {
   logout: () => void;
   error: string | null;
   clearError: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 interface RegisterData {
@@ -130,6 +131,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   };
 
+  const refreshUser = async () => {
+    if (authApi.isAuthenticated()) {
+      try {
+        const response = await authApi.getProfile();
+        if (response.success) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        // Error refreshing user data - handled silently
+      }
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated,
@@ -139,6 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     error,
     clearError,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

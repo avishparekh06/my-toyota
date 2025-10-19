@@ -1,6 +1,6 @@
 // Main recommendation engine for Toyota cars
 import { mockUsers } from './mockUsers.js';
-import { mockCars } from './mockCars.js';
+import { carsApi } from '../services/api.js';
 import { 
   calculateOverallScore, 
   sortCarsByScore, 
@@ -14,15 +14,27 @@ import {
  * @param {number} minScore - Minimum score threshold for recommendations (default: 20)
  * @returns {Object} Recommendation results with top cars and scoring details
  */
-export const getRecommendations = (userId, limit = 5, minScore = 20) => {
+export const getRecommendations = async (userId, limit = 5, minScore = 20) => {
   // Get user data - support both _id and id
   const user = mockUsers.find(u => u._id === userId || u.id === userId);
   if (!user) {
     throw new Error(`User with ID ${userId} not found`);
   }
+
+  // Fetch real car data from the database
+  const carsResponse = await carsApi.getCars({ 
+    limit: 1000, // Get all cars
+    status: 'In Stock' // Only get available cars
+  });
+  
+  if (!carsResponse.success || !carsResponse.data) {
+    throw new Error('Failed to fetch car data from database');
+  }
+  
+  const realCars = carsResponse.data;
   
   // Calculate scores for all cars
-  const carsWithScores = mockCars.map(car => {
+  const carsWithScores = realCars.map(car => {
     const score = calculateOverallScore(car, user);
     return {
       car: car,
@@ -75,7 +87,7 @@ export const getRecommendations = (userId, limit = 5, minScore = 20) => {
       reasons: generateRecommendationReasons(item.car, user, item.score.breakdown)
     })),
     statistics: stats,
-    totalCarsAnalyzed: mockCars.length,
+    totalCarsAnalyzed: realCars.length,
     carsFiltered: carsWithScores.length - filteredCars.length,
     recommendationsReturned: topRecommendations.length
   };

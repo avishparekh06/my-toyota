@@ -28,113 +28,73 @@ export class LLMExplanationService {
     recommendation: RAGRecommendation,
     similarityBreakdown?: any
   ): Promise<{ explanation: string; reasons: string[] }> {
-    try {
-      const prompt = this.createExplanationPrompt(user, recommendation, similarityBreakdown);
-      
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const explanationText = response.text();
-      
-      // Parse the response to extract explanation and reasons
-      return this.parseExplanationResponse(explanationText);
-    } catch (error) {
-      console.error('Error generating explanation:', error);
-      // Fallback to basic explanation
-      return this.generateFallbackExplanation(user, recommendation);
-    }
+    // Use enhanced fallback explanation instead of AI generation
+    return this.generateEnhancedFallbackExplanation(user, recommendation);
   }
 
+
   /**
-   * Create prompt for explanation generation
+   * Generate enhanced fallback explanation with more personalization
    */
-  private createExplanationPrompt(user: any, recommendation: RAGRecommendation, similarityBreakdown?: any): string {
+  private generateEnhancedFallbackExplanation(user: any, recommendation: RAGRecommendation): { explanation: string; reasons: string[] } {
     const car = recommendation.carData;
-    
-    return `You are an expert Toyota sales consultant helping a customer understand why a specific vehicle is perfect for their needs.
+    const reasons: string[] = [];
 
-CUSTOMER PROFILE:
-- Name: ${user.name}
-- Age: ${user.age}
-- Family Size: ${user.familySize}
-- Location: ${user.location.city}, ${user.location.state}
-- Budget: $${user.budget.min.toLocaleString()} - $${user.budget.max.toLocaleString()}
-- Preferences: ${JSON.stringify(user.preferences, null, 2)}
-- Financial: ${user.financial ? `Income: $${user.financial.annualIncome?.toLocaleString()}, Credit: ${user.financial.creditScore}` : 'Not specified'}
-
-RECOMMENDED VEHICLE:
-- ${recommendation.car}
-- MSRP: $${car.msrp.toLocaleString()}
-- Engine: ${car.engine}
-- MPG: ${car.mpgCity}/${car.mpgHighway} city/highway
-- Drivetrain: ${car.drivetrain}
-- Fuel Type: ${car.fuelType}
-- Key Features: ${car.features.join(', ')}
-
-SIMILARITY ANALYSIS:
-- Overall Match Score: ${Math.round(recommendation.similarityScore * 100)}%
-- Budget Fit: ${Math.round(recommendation.budgetFit * 100)}%
-- Location Proximity: ${Math.round(recommendation.locationProximity * 100)}%
-
-Please provide:
-1. A compelling 2-3 sentence explanation of why this vehicle is perfect for this customer
-2. 3-4 specific reasons why this car matches their needs
-
-Format your response as:
-EXPLANATION: [your explanation here]
-REASONS:
-- [reason 1]
-- [reason 2]
-- [reason 3]
-- [reason 4]
-
-Make it personal, specific, and highlight the most relevant benefits for this customer's situation.`;
-  }
-
-  /**
-   * Parse the LLM response to extract explanation and reasons
-   */
-  private parseExplanationResponse(responseText: string): { explanation: string; reasons: string[] } {
-    try {
-      const lines = responseText.split('\n');
-      let explanation = '';
-      const reasons: string[] = [];
-      
-      let currentSection = '';
-      
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        
-        if (trimmedLine.startsWith('EXPLANATION:')) {
-          explanation = trimmedLine.replace('EXPLANATION:', '').trim();
-          currentSection = 'explanation';
-        } else if (trimmedLine.startsWith('REASONS:')) {
-          currentSection = 'reasons';
-        } else if (currentSection === 'reasons' && trimmedLine.startsWith('-')) {
-          reasons.push(trimmedLine.replace('-', '').trim());
-        } else if (currentSection === 'explanation' && trimmedLine && !trimmedLine.startsWith('REASONS:')) {
-          explanation += ' ' + trimmedLine;
-        }
-      }
-      
-      // Clean up explanation
-      explanation = explanation.trim();
-      
-      // Ensure we have at least some content
-      if (!explanation) {
-        explanation = "This vehicle offers an excellent combination of features, performance, and value that aligns well with your needs and preferences.";
-      }
-      
-      if (reasons.length === 0) {
-        reasons.push("Matches your preferred vehicle type and budget range");
-        reasons.push("Offers the features and performance you're looking for");
-        reasons.push("Provides excellent value for your investment");
-      }
-      
-      return { explanation, reasons };
-    } catch (error) {
-      console.error('Error parsing explanation response:', error);
-      return this.generateFallbackExplanation(null, null);
+    // Personalized budget reason
+    if (recommendation.budgetFit >= 0.8) {
+      reasons.push(`Perfect fit within your $${user.budget.min.toLocaleString()}-$${user.budget.max.toLocaleString()} budget range`);
+    } else {
+      reasons.push(`Excellent value at $${car.dealerPrice.toLocaleString()}, well within your budget`);
     }
+
+    // Personalized feature reasons based on user preferences
+    if (user.preferences && user.preferences.bodyStylePreference) {
+      const preferredBodyStyle = user.preferences.bodyStylePreference[0];
+      if (car.bodyStyle === preferredBodyStyle) {
+        reasons.push(`Matches your preferred ${preferredBodyStyle} body style perfectly`);
+      }
+    }
+
+    // Fuel type preference
+    if (user.preferences && user.preferences.fuelTypePreference) {
+      const preferredFuelType = user.preferences.fuelTypePreference[0];
+      if (car.fuelType === preferredFuelType) {
+        reasons.push(`Features your preferred ${preferredFuelType} powertrain for optimal efficiency`);
+      }
+    }
+
+    // Family size consideration
+    if (user.familySize && user.familySize > 2) {
+      if (car.bodyStyle === 'SUV' || car.bodyStyle === 'Crossover') {
+        reasons.push(`Spacious ${car.bodyStyle} design perfect for your family of ${user.familySize}`);
+      }
+    }
+
+    // Location-based reason
+    if (user.location && car.location) {
+      if (user.location.state === car.location.state) {
+        reasons.push(`Conveniently located in ${car.location.city}, ${car.location.state} for easy pickup`);
+      }
+    }
+
+    // Performance reason
+    if (car.mpgCity && car.mpgHighway) {
+      reasons.push(`Outstanding fuel economy with ${car.mpgCity}/${car.mpgHighway} MPG city/highway`);
+    }
+
+    // Ensure we have at least 3 reasons
+    if (reasons.length < 3) {
+      if (car.features && car.features.length > 0) {
+        reasons.push(`Includes premium features like ${car.features.slice(0, 2).join(' and ')}`);
+      }
+      if (car.drivetrain === 'AWD') {
+        reasons.push(`All-wheel drive for enhanced safety and performance`);
+      }
+    }
+
+    const explanation = `The ${recommendation.car} is an excellent choice for you, ${user.name}. This vehicle perfectly balances your budget requirements with the features and performance you need for your lifestyle in ${user.location.city}.`;
+
+    return { explanation, reasons };
   }
 
   /**
@@ -200,28 +160,16 @@ Make it personal, specific, and highlight the most relevant benefits for this cu
     const updatedRecommendations: RAGRecommendation[] = [];
 
     for (const recommendation of recommendations) {
-      try {
-        const { explanation, reasons } = await this.generateExplanation(user, recommendation);
-        
-        updatedRecommendations.push({
-          ...recommendation,
-          explanation,
-          reasons
-        });
-      } catch (error) {
-        console.error('Error generating explanation for recommendation:', error);
-        
-        // Use fallback explanation
-        const { explanation, reasons } = this.generateFallbackExplanation(user, recommendation);
-        
-        updatedRecommendations.push({
-          ...recommendation,
-          explanation,
-          reasons
-        });
-      }
+      const { explanation, reasons } = this.generateEnhancedFallbackExplanation(user, recommendation);
+      
+      updatedRecommendations.push({
+        ...recommendation,
+        explanation,
+        reasons
+      });
     }
 
     return updatedRecommendations;
   }
+
 }

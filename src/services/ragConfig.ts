@@ -9,6 +9,7 @@ export const RAG_CONFIG = {
     MSRP_TOLERANCE: 0, // No MSRP filtering - show all cars
     BODY_STYLE_MATCH: false, // Don't require exact body style match
     MIN_SIMILARITY_SCORE: 0, // No minimum similarity threshold - show all cars
+    BUDGET_FILTER: true, // Only show cars within budget range
   },
   
   // Embedding Configuration

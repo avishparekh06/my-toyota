@@ -68,7 +68,7 @@ export function AuthPage() {
       navigate("/profile")
     } catch (error) {
       // Error is handled by the auth context
-      console.error('Login error:', error)
+      // Login error
     } finally {
       setIsSubmitting(false)
     }
@@ -101,7 +101,7 @@ export function AuthPage() {
       navigate("/profile")
     } catch (error) {
       // Error is handled by the auth context
-      console.error('Registration error:', error)
+      // Registration error
     } finally {
       setIsSubmitting(false)
     }

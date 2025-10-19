@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/contexts/AuthContext"
 import { getRecommendations } from '../recommendation/ragRecommender';
-import RAGDebugger from '../components/RAGDebugger';
 
 interface Recommendation {
   car: string;
@@ -41,7 +40,6 @@ const RecommendationPage = () => {
   const [recommendationResult, setRecommendationResult] = useState<RecommendationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showDebugger, setShowDebugger] = useState(false);
   const [showAllResults, setShowAllResults] = useState(true); // Show all results by default
 
   // Auto-load recommendations when user is authenticated
@@ -63,16 +61,11 @@ const RecommendationPage = () => {
 
     try {
       // Use RAG system with user's ID - get more results to show all
-      console.log('Getting recommendations for user:', user._id);
       const result = await getRecommendations(user._id, 20); // Get more results
-      console.log('Received recommendation result:', result);
-      console.log('Recommendations array:', result.recommendations);
-      console.log('Recommendations length:', result.recommendations?.length);
       
       setRecommendations(result.recommendations);
       setRecommendationResult(result);
     } catch (err) {
-      console.error('Error getting recommendations:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -153,39 +146,43 @@ const RecommendationPage = () => {
                   <div>
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 mb-3">
                         We'll use your profile data to find the perfect Toyota for you.
                       </p>
+                      {user?.finance?.budgetRange && (
+                        <div className="bg-white rounded-lg p-3 border border-gray-200">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Your Budget Range</h4>
+                          <div className="flex items-center space-x-4 text-sm">
+                            <div>
+                              <span className="text-gray-500">Min:</span>
+                              <span className="font-semibold text-green-600 ml-1">
+                                ${user.finance.budgetRange.min.toLocaleString()}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-500">Max:</span>
+                              <span className="font-semibold text-green-600 ml-1">
+                                ${user.finance.budgetRange.max.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-end space-x-2">
+                  <div className="flex items-end">
                     <Button 
                       onClick={handleGetRecommendations}
                       disabled={loading}
-                      className="flex-1 bg-[#EB0A1E] hover:bg-[#CF0A19] text-white"
+                      className="w-full bg-[#EB0A1E] hover:bg-[#CF0A19] text-white"
                     >
                       {loading ? 'Getting Recommendations...' : 'Get My Recommendations'}
-                    </Button>
-                    <Button 
-                      onClick={() => setShowDebugger(!showDebugger)}
-                      variant="outline"
-                      className="px-4"
-                    >
-                      {showDebugger ? 'Hide' : 'Debug'}
                     </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Debugger */}
-            {showDebugger && (
-              <Card className="mb-8">
-                <CardContent className="p-6">
-                  <RAGDebugger />
-                </CardContent>
-              </Card>
-            )}
 
             {/* Error Display */}
             {error && (
@@ -199,24 +196,6 @@ const RecommendationPage = () => {
               </Card>
             )}
 
-            {/* Debug Info */}
-            {recommendations && (
-              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h4 className="font-semibold text-yellow-800 mb-2">Debug Info - Showing ALL Cars</h4>
-                <p className="text-sm text-yellow-700">
-                  Total recommendations: {recommendations.length}
-                </p>
-                <p className="text-sm text-yellow-700">
-                  Show all results: {showAllResults ? 'Yes' : 'No'}
-                </p>
-                <p className="text-sm text-yellow-700">
-                  Displaying: {showAllResults ? recommendations.length : Math.min(recommendations.length, 5)} cars
-                </p>
-                <p className="text-sm text-yellow-700">
-                  No filters applied - all cars shown with similarity scores
-                </p>
-              </div>
-            )}
 
             {/* No Recommendations Message */}
             {recommendations && recommendations.length === 0 && (
@@ -263,7 +242,7 @@ const RecommendationPage = () => {
                           variant="outline"
                           size="sm"
                         >
-                          {showAllResults ? 'Show Top 5' : 'Show All Cars'}
+                          {showAllResults ? 'Show Top 5' : 'Show All Results'}
                         </Button>
                       </div>
                     </div>
@@ -274,11 +253,11 @@ const RecommendationPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                           <div>
                             <div className="text-2xl font-bold text-green-700">{recommendations.length}</div>
-                            <div className="text-sm text-green-600">All Cars Shown</div>
+                            <div className="text-sm text-green-600">Recommendations Found</div>
                           </div>
                           <div>
                             <div className="text-2xl font-bold text-blue-700">{recommendationResult.totalCarsAnalyzed}</div>
-                            <div className="text-sm text-blue-600">Total Cars Analyzed</div>
+                            <div className="text-sm text-blue-600">Cars Analyzed</div>
                           </div>
                           <div>
                             <div className="text-2xl font-bold text-purple-700">
@@ -453,15 +432,8 @@ const RecommendationPage = () => {
                               </div>
                             </div>
 
-                            {/* AI-Generated Explanation */}
+                            {/* Key Reasons */}
                             <div className="mb-4">
-                              <h5 className="font-semibold text-gray-700 mb-2">AI Recommendation:</h5>
-                              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 mb-3">
-                                <p className="text-sm text-gray-700 italic">
-                                  "{rec.explanation}"
-                                </p>
-                              </div>
-                              
                               <h6 className="font-medium text-gray-700 mb-2">Key Reasons:</h6>
                               <ul className="space-y-1">
                                 {rec.reasons.map((reason, reasonIndex) => (

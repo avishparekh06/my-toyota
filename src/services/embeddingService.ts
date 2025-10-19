@@ -30,7 +30,7 @@ export class EmbeddingService {
       // Create a comprehensive feature-based embedding
       return this.createFeatureEmbedding(text);
     } catch (error) {
-      console.error('Error generating embedding:', error);
+      // Error generating embedding
       // Fallback: create a simple hash-based embedding
       return this.createFallbackEmbedding(text);
     }
@@ -332,13 +332,7 @@ export class EmbeddingService {
     const profileText = this.createUserProfileText(user);
     const embedding = await this.generateEmbedding(profileText);
 
-    console.log('Generated user embedding:', {
-      userId: user._id || user.id,
-      profileText,
-      embeddingLength: embedding.length,
-      embeddingSample: embedding.slice(0, 10),
-      embeddingSum: embedding.reduce((a, b) => a + b, 0)
-    });
+    // Generated user embedding
 
     return {
       userId: user._id || user.id,
@@ -357,14 +351,7 @@ export class EmbeddingService {
     const featureText = this.createCarFeatureText(car);
     const embedding = await this.generateEmbedding(featureText);
 
-    console.log('Generated car embedding:', {
-      carId: car._id || car.id,
-      carName: `${car.year} ${car.make} ${car.model}`,
-      featureText,
-      embeddingLength: embedding.length,
-      embeddingSample: embedding.slice(0, 10),
-      embeddingSum: embedding.reduce((a, b) => a + b, 0)
-    });
+    // Generated car embedding
 
     return {
       carId: car._id || car.id,
