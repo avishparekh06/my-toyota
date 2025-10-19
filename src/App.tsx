@@ -5,6 +5,9 @@ import { VehiclesPage } from "@/routes/Vehicles"
 import { RecommendationPage } from "@/routes/Recommendation"
 import { UserProfilePage } from "@/routes/UserProfile"
 import { PlanSimulatorPage } from "@/routes/PlanSimulator"
+import { PrivacyPage } from "@/routes/Privacy"
+import { AccessibilityPage } from "@/routes/Accessibility"
+import { TermsPage } from "@/routes/Terms"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { CarProvider } from "@/contexts/CarContext"
 import { Navbar } from "@/components/Navbar"
@@ -24,6 +27,9 @@ function App() {
             <Route path="/recommendations" element={<RecommendationPage />} />
             <Route path="/plans" element={<PlanSimulatorPage />} />
             <Route path="/profile" element={<UserProfilePage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/accessibility" element={<AccessibilityPage />} />
+            <Route path="/terms" element={<TermsPage />} />
           </Routes>
         </Router>
       </CarProvider>

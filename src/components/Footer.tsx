@@ -22,7 +22,7 @@ export function Footer() {
               <li><a href="https://www.toyota.com/support/contact-us/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Contact Us</a></li>
               <li><a href="https://www.toyota.com/support/faq/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Help Center</a></li>
               <li><a href="https://www.toyota.com/dealers/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Find a Dealer</a></li>
-              <li><a href="https://www.toyota.com/schedule-test-drive/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Schedule Test Drive</a></li>
+              <li><Link to="/vehicles" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Schedule Test Drive</Link></li>
             </ul>
           </div>
         </div>
