@@ -5,11 +5,7 @@ import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { 
-  getRecommendations, 
-  getAllUserRecommendations,
-  getRecommendationsByName 
-} from '../recommendation/simpleRecommender.js';
+import { getRecommendations } from '../recommendation/ragRecommender';
 
 interface User {
   id: string;
@@ -20,7 +16,11 @@ interface User {
 
 interface Recommendation {
   car: string;
-  score: number;
+  carData: any;
+  similarityScore: number;
+  budgetFit: number;
+  locationProximity: number;
+  explanation: string;
   reasons: string[];
 }
 
@@ -46,7 +46,7 @@ const RecommendationPage = () => {
 
     try {
       const result = await getRecommendations(selectedUser, 5);
-      setRecommendations(result);
+      setRecommendations(result.recommendations);
     } catch (err) {
       console.error('Error getting recommendations:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -55,35 +55,6 @@ const RecommendationPage = () => {
     }
   };
 
-  const handleGetAllRecommendations = async () => {
-    setLoading(true);
-    setError(null);
-    setRecommendations(null);
-
-    try {
-      const results = await getAllUserRecommendations(3);
-      setRecommendations({ allUsers: results } as any);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGetRecommendationsByName = async () => {
-    setLoading(true);
-    setError(null);
-    setRecommendations(null);
-
-    try {
-      const results = await getRecommendationsByName('Ava Martinez', 3);
-      setRecommendations(results);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
@@ -97,7 +68,7 @@ const RecommendationPage = () => {
               Smart Vehicle Recommendations
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get personalized Toyota recommendations based on your profile, preferences, and financial situation.
+              Get personalized Toyota recommendations using AI-powered semantic matching based on your profile, preferences, and financial situation.
             </p>
           </div>
         </Container>
@@ -141,28 +112,7 @@ const RecommendationPage = () => {
               </CardContent>
             </Card>
 
-            {/* Test Buttons */}
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Test Different Scenarios</h3>
-                <div className="flex flex-wrap gap-4">
-                  <Button 
-                    onClick={handleGetAllRecommendations}
-                    disabled={loading}
-                    variant="outline"
-                  >
-                    Get All User Recommendations
-                  </Button>
-                  <Button 
-                    onClick={handleGetRecommendationsByName}
-                    disabled={loading}
-                    variant="outline"
-                  >
-                    Get Recommendations by Name
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Error Display */}
             {error && (
@@ -215,7 +165,7 @@ const RecommendationPage = () => {
                               {/* Match Score Badge */}
                               <div className="absolute top-3 right-3">
                                 <span className="bg-[#EB0A1E] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                  {Math.round(rec.score * 100)}% Match
+                                  {Math.round(rec.similarityScore * 100)}% Match
                                 </span>
                               </div>
                             </div>
@@ -280,9 +230,16 @@ const RecommendationPage = () => {
                                 </div>
                               </div>
 
-                              {/* Why This Car Fits */}
+                              {/* AI-Generated Explanation */}
                               <div className="mb-4">
-                                <h5 className="font-semibold text-gray-700 mb-2">Why this car fits you:</h5>
+                                <h5 className="font-semibold text-gray-700 mb-2">AI Recommendation:</h5>
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 mb-3">
+                                  <p className="text-sm text-gray-700 italic">
+                                    "{rec.explanation}"
+                                  </p>
+                                </div>
+                                
+                                <h6 className="font-medium text-gray-700 mb-2">Key Reasons:</h6>
                                 <ul className="space-y-1">
                                   {rec.reasons.map((reason, reasonIndex) => (
                                     <li key={reasonIndex} className="text-sm text-gray-600 flex items-start">
