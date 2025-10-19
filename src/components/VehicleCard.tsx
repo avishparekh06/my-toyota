@@ -76,8 +76,7 @@ export function VehicleCard({ car, className, onViewDetails }: VehicleCardProps)
   }
 
   const getCarImage = () => {
-    // When car images are available, this will return the first image
-    // For now, return null to show placeholder
+    // Return the first image from the car's images array
     return car.images && car.images.length > 0 ? car.images[0] : null
   }
 

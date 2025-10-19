@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from "framer-motion"
 import { Footer } from "@/components/Footer"
 import { Container } from "@/components/Container"
@@ -23,7 +23,27 @@ const RecommendationPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const recommendationsRef = useRef<HTMLDivElement>(null);
 
-  // Remove auto-loading - recommendations will only load when user clicks the button
+  // Check for existing recommendations on page load
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // Check if user has previously requested recommendations
+      const hasRequestedBefore = localStorage.getItem(`hasRequestedRecommendations_${user._id}`);
+      const savedRecommendations = localStorage.getItem(`recommendations_${user._id}`);
+      const savedRecommendationResult = localStorage.getItem(`recommendationResult_${user._id}`);
+      
+      if (hasRequestedBefore === 'true' && savedRecommendations && savedRecommendationResult) {
+        try {
+          const parsedRecommendations = JSON.parse(savedRecommendations);
+          const parsedResult = JSON.parse(savedRecommendationResult);
+          setRecommendations(parsedRecommendations);
+          setRecommendationResult(parsedResult);
+          setHasRequestedRecommendations(true);
+        } catch (error) {
+          console.error('Error parsing saved recommendations:', error);
+        }
+      }
+    }
+  }, [isAuthenticated, user]);
 
   // Simplified version without debouncing to prevent click issues
   const handleGetRecommendationsClick = () => {
@@ -58,6 +78,10 @@ const RecommendationPage = () => {
     setError(null);
     setRecommendations(null);
     setHasRequestedRecommendations(true);
+    
+    // Clear any existing saved recommendations to get fresh ones
+    localStorage.removeItem(`recommendations_${user._id}`);
+    localStorage.removeItem(`recommendationResult_${user._id}`);
 
     try {
       // Use RAG system with user's ID - get more results to show all
@@ -65,6 +89,11 @@ const RecommendationPage = () => {
       
       setRecommendations(result.recommendations);
       setRecommendationResult(result);
+      
+      // Save recommendations to localStorage for persistence
+      localStorage.setItem(`recommendations_${user._id}`, JSON.stringify(result.recommendations));
+      localStorage.setItem(`recommendationResult_${user._id}`, JSON.stringify(result));
+      localStorage.setItem(`hasRequestedRecommendations_${user._id}`, 'true');
       
       // Auto-scroll to recommendations after they're loaded
       setTimeout(() => {
