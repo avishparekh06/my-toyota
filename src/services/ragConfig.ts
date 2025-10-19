@@ -1,7 +1,7 @@
 // RAG Configuration for Toyota Recommendation System
 export const RAG_CONFIG = {
   // Gemini API Configuration
-  GEMINI_API_KEY: (import.meta as any).env?.VITE_GEMINI_API_KEY || 'AIzaSyBR5m6S95FwfqnCzQvdkBArbrPqXVwFlpo',
+  GEMINI_API_KEY: (import.meta as any).env?.VITE_GEMINI_API_KEY,
   GEMINI_MODEL: 'gemini-1.5-flash',
   
   // Filtering Configuration
