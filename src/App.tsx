@@ -8,12 +8,14 @@ import { PlanSimulatorPage } from "@/routes/PlanSimulator"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { CarProvider } from "@/contexts/CarContext"
 import { Navbar } from "@/components/Navbar"
+import { ScrollToTop } from "@/components/ScrollToTop"
 
 function App() {
   return (
     <AuthProvider>
       <CarProvider>
         <Router>
+          <ScrollToTop />
           <Navbar />
           <Routes>
             <Route path="/" element={<LandingPage />} />

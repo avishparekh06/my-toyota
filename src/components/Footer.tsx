@@ -9,20 +9,20 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-[var(--text)]">Vehicles</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/#cars" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Cars</Link></li>
-              <li><Link to="/#suvs" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">SUVs</Link></li>
-              <li><Link to="/#trucks" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Trucks</Link></li>
-              <li><Link to="/#hybrids" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Hybrids</Link></li>
+              <li><Link to="/vehicles" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Cars</Link></li>
+              <li><Link to="/vehicles?filter=SUV" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">SUVs</Link></li>
+              <li><Link to="/vehicles?filter=Truck" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Trucks</Link></li>
+              <li><Link to="/vehicles?filter=Sedan" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Sedans</Link></li>
             </ul>
           </div>
           
           <div className="space-y-4">
             <h3 className="font-semibold text-[var(--text)]">Support</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/#contact" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Contact Us</Link></li>
-              <li><Link to="/#help" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Help Center</Link></li>
-              <li><Link to="/#dealers" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Find a Dealer</Link></li>
-              <li><Link to="/#test-drive" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Schedule Test Drive</Link></li>
+              <li><a href="https://www.toyota.com/support/contact-us/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Contact Us</a></li>
+              <li><a href="https://www.toyota.com/support/faq/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Help Center</a></li>
+              <li><a href="https://www.toyota.com/dealers/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Find a Dealer</a></li>
+              <li><a href="https://www.toyota.com/schedule-test-drive/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors">Schedule Test Drive</a></li>
             </ul>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { VehicleCard } from '@/components/VehicleCard'
 import { CarDetailModal } from '@/components/CarDetailModal'
 import { carsApi } from '@/services/api'
+import { useSearchParams } from 'react-router-dom'
 
 interface Car {
   _id: string
@@ -61,6 +62,7 @@ interface CarsResponse {
 }
 
 export function VehiclesPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [cars, setCars] = useState<Car[]>([])
   const [filteredCars, setFilteredCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +70,14 @@ export function VehiclesPage() {
   const [selectedCar, setSelectedCar] = useState<Car | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedBodyStyle, setSelectedBodyStyle] = useState<string>('All')
+
+  // Initialize filter from URL parameters
+  useEffect(() => {
+    const filter = searchParams.get('filter')
+    if (filter) {
+      setSelectedBodyStyle(filter)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -294,7 +304,16 @@ export function VehiclesPage() {
               <motion.select
                 id="bodyStyleFilter"
                 value={selectedBodyStyle}
-                onChange={(e) => setSelectedBodyStyle(e.target.value)}
+                onChange={(e) => {
+                  const newFilter = e.target.value
+                  setSelectedBodyStyle(newFilter)
+                  // Update URL parameters
+                  if (newFilter === 'All') {
+                    setSearchParams({})
+                  } else {
+                    setSearchParams({ filter: newFilter })
+                  }
+                }}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]/20 focus:border-[#EB0A1E] bg-white transition-all duration-200"
                 whileFocus={{ scale: 1.02 }}
               >
