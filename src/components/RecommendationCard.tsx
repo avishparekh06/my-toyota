@@ -1,21 +1,6 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-
-interface Recommendation {
-  car: string;
-  carData: any;
-  similarityScore: number;
-  budgetFit: number;
-  locationProximity: number;
-  semanticSimilarity: number;
-  breakdown: {
-    semantic: number;
-    budget: number;
-    location: number;
-  };
-  explanation: string;
-  reasons: string[];
-}
+import { Recommendation } from '@/types/recommendation'
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -25,7 +10,6 @@ interface RecommendationCardProps {
 }
 
 export function RecommendationCard({ recommendation, className, onViewDetails, rank }: RecommendationCardProps) {
-  const [selectedYear, setSelectedYear] = useState(recommendation.carData.year)
   const { carData: car } = recommendation;
 
   const formatPrice = (price: number) => {
@@ -80,8 +64,8 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
   return (
     <div
       className={cn(
-        "group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] overflow-hidden",
-        "hover:border-[#EB0A1E]/20 flex flex-col h-full cursor-pointer",
+        "group relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] overflow-hidden",
+        "hover:border-[#EB0A1E]/30 flex flex-col h-full cursor-pointer",
         className
       )}
       onClick={handleCardClick}
@@ -111,7 +95,7 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Match Score Badge */}
         <div className="absolute top-3 right-3">
           <div className={cn(
-            "px-3 py-1 text-xs font-semibold rounded-full border",
+            "px-3 py-1.5 text-xs font-bold rounded-full border shadow-sm backdrop-blur-sm",
             getMatchScoreColor(recommendation.similarityScore)
           )}>
             {Math.round(recommendation.similarityScore * 100)}% Match
@@ -121,10 +105,10 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Status Badge */}
         <div className="absolute top-3 left-3">
           <span className={cn(
-            "px-2 py-1 text-xs font-semibold rounded-full",
+            "px-2.5 py-1 text-xs font-semibold rounded-full shadow-sm backdrop-blur-sm",
             car.status === "In Stock" 
-              ? "bg-green-100 text-green-800" 
-              : "bg-yellow-100 text-yellow-800"
+              ? "bg-green-100 text-green-800 border border-green-200" 
+              : "bg-yellow-100 text-yellow-800 border border-yellow-200"
           )}>
             {car.status}
           </span>
@@ -133,7 +117,7 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Ranking Badge */}
         {rank && (
           <div className="absolute top-12 left-3">
-            <div className="bg-black/70 text-white px-2 py-1 rounded-full text-xs font-semibold">
+            <div className="bg-black/80 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
               #{rank}
             </div>
           </div>
@@ -142,33 +126,6 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
 
       {/* Card Content */}
       <div className="p-5 flex flex-col flex-grow">
-        {/* Year Selector Tabs */}
-        <div className="mb-4">
-          <div className="flex space-x-1 bg-gray-50 rounded-xl p-1">
-            <button
-              onClick={() => setSelectedYear(car.year)}
-              className={cn(
-                "flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                selectedYear === car.year
-                  ? "bg-white text-gray-900 shadow-sm border border-gray-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-              )}
-            >
-              {car.year}
-            </button>
-            <button
-              onClick={() => setSelectedYear(car.year + 1)}
-              className={cn(
-                "flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                selectedYear === car.year + 1
-                  ? "bg-white text-gray-900 shadow-sm border border-gray-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-              )}
-            >
-              {car.year + 1}
-            </button>
-          </div>
-        </div>
 
         {/* Vehicle Name */}
         <div className="mb-3">
@@ -186,19 +143,19 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
 
         {/* Match Score Summary */}
         <div className="mb-4">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Overall Match</span>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold text-gray-700">Overall Match</span>
               <span className={cn(
-                "text-sm font-bold px-2 py-1 rounded-full",
+                "text-sm font-bold px-3 py-1 rounded-full border shadow-sm",
                 getMatchScoreColor(recommendation.similarityScore)
               )}>
                 {getMatchScoreText(recommendation.similarityScore)}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
               <div 
-                className="bg-gradient-to-r from-[#EB0A1E] to-[#CF0A19] h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#EB0A1E] to-[#CF0A19] h-2.5 rounded-full transition-all duration-700 shadow-sm"
                 style={{ width: `${recommendation.similarityScore * 100}%` }}
               ></div>
             </div>
@@ -208,19 +165,19 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Vehicle Details */}
         <div className="mb-4">
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <div className="text-gray-500 text-xs uppercase tracking-wide font-medium mb-1">Body Style</div>
               <div className="font-semibold text-gray-900">{car.bodyStyle}</div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <div className="text-gray-500 text-xs uppercase tracking-wide font-medium mb-1">Engine</div>
               <div className="font-semibold text-gray-900 text-xs">{car.engine}</div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <div className="text-gray-500 text-xs uppercase tracking-wide font-medium mb-1">MPG</div>
               <div className="font-semibold text-gray-900">{car.mpgCity}/{car.mpgHighway}</div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <div className="text-gray-500 text-xs uppercase tracking-wide font-medium mb-1">Drivetrain</div>
               <div className="font-semibold text-gray-900">{car.drivetrain}</div>
             </div>
@@ -260,16 +217,16 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
               </div>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Features</span>
+              <span className="text-gray-600">Overall Match</span>
               <div className="flex items-center space-x-2">
                 <div className="w-16 bg-gray-200 rounded-full h-1.5">
                   <div 
                     className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${recommendation.breakdown.semantic * 100}%` }}
+                    style={{ width: `${recommendation.similarityScore * 100}%` }}
                   ></div>
                 </div>
                 <span className="text-xs font-medium text-gray-700 w-8">
-                  {Math.round(recommendation.breakdown.semantic * 100)}%
+                  {Math.round(recommendation.similarityScore * 100)}%
                 </span>
               </div>
             </div>
@@ -291,7 +248,7 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
 
         {/* Pricing */}
         <div className="mb-5">
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
             <div className="flex items-baseline justify-between mb-1">
               <span className="text-sm text-gray-600 font-medium">Starting MSRP</span>
               <span className="text-2xl font-bold text-gray-900">
@@ -307,7 +264,7 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         {/* Dealership Info */}
         {car.dealership && (
           <div className="mb-4">
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <div className="text-gray-500 text-xs uppercase tracking-wide font-medium mb-1">Available at</div>
               <div className="font-semibold text-gray-900 text-sm">{car.dealership.name}</div>
               <div className="text-xs text-gray-600">{car.dealership.city}, {car.dealership.state}</div>
@@ -319,11 +276,11 @@ export function RecommendationCard({ recommendation, className, onViewDetails, r
         <div className="space-y-3 mt-auto">
           <button 
             onClick={handleViewOptionsClick}
-            className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm"
+            className="w-full py-3 px-4 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-sm hover:scale-[1.02]"
           >
             View Details
           </button>
-          <button className="w-full py-3 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25">
+          <button className="w-full py-3 px-4 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25 hover:scale-[1.02]">
             Select Vehicle
           </button>
         </div>

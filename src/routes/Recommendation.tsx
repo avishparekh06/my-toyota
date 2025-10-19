@@ -8,33 +8,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { getRecommendations } from '../recommendation/ragRecommender';
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { CarDetailModal } from "@/components/CarDetailModal";
-
-interface Recommendation {
-  car: string;
-  carData: any;
-  similarityScore: number;
-  budgetFit: number;
-  locationProximity: number;
-  semanticSimilarity: number;
-  breakdown: {
-    semantic: number;
-    budget: number;
-    location: number;
-  };
-  explanation: string;
-  reasons: string[];
-}
-
-interface RecommendationResult {
-  user: {
-    id: string;
-    name: string;
-  };
-  recommendations: Recommendation[];
-  totalCarsAnalyzed: number;
-  filteredCars: number;
-  method: string;
-}
+import { Recommendation, RecommendationResult } from "@/types/recommendation";
 
 const RecommendationPage = () => {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -152,14 +126,14 @@ const RecommendationPage = () => {
       <Container>
         <div className="py-12">
           <div className="max-w-4xl mx-auto">
-            {/* User Profile */}
+            {/* Recommendation Generator */}
             <Card className="mb-8">
               <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Your Profile</h2>
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Get Your Personalized Recommendations</h2>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-6">
                   <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
                   <p className="text-sm text-gray-600 mb-3">
-                    We'll use your profile data to find the perfect Toyota for you.
+                    Our AI will analyze your profile and preferences to find the perfect Toyota for you.
                   </p>
                   {user?.finance?.budgetRange && (
                     <div className="bg-white rounded-lg p-3 border border-gray-200">
@@ -187,9 +161,21 @@ const RecommendationPage = () => {
                   <Button 
                     onClick={handleGetRecommendations}
                     disabled={loading}
-                    className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-8 py-3 text-lg"
+                    className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   >
-                    {loading ? 'Getting Recommendations...' : 'Get My Recommendations'}
+                    {loading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Getting Recommendations...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>Get My Recommendations</span>
+                      </div>
+                    )}
                   </Button>
                 </div>
               </CardContent>
