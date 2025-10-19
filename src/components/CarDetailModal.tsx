@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { vapiService } from '@/services/vapiService'
 import {
   Dialog,
   DialogContent,
@@ -62,6 +64,11 @@ interface CarDetailModalProps {
 
 export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [isCalling, setIsCalling] = useState(false)
+  const [callStatus, setCallStatus] = useState<string | null>(null)
+  const [showPhoneInput, setShowPhoneInput] = useState(false)
+  const { user } = useAuth()
 
   if (!car) return null
 
@@ -87,6 +94,69 @@ export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
 
   const getCarImage = () => {
     return car.images && car.images.length > 0 ? car.images[selectedImageIndex] : null
+  }
+
+  const handleCallDealer = async () => {
+    if (!user) {
+      setCallStatus('Please log in to call the dealer')
+      return
+    }
+
+    // Check if user has a phone number in their account
+    if (!user.phone) {
+      setCallStatus('Please add a phone number to your profile to use this feature')
+      setShowPhoneInput(true)
+      return
+    }
+
+    if (!vapiService.validatePhoneNumber(user.phone)) {
+      setCallStatus('Please update your phone number in your profile to a valid format')
+      setShowPhoneInput(true)
+      return
+    }
+
+    setIsCalling(true)
+    setCallStatus('Initiating call...')
+
+    try {
+      // Debug: Log the car data being used for the call
+      console.log('CarDetailModal - Car data for Vapi call:', {
+        carId: car._id,
+        carMake: car.make,
+        carModel: car.model,
+        carYear: car.year,
+        carTrim: car.trim,
+        carPrice: car.dealerPrice,
+        carStockNumber: car.stockNumber,
+        dealershipName: car.dealership?.name,
+        dealershipCity: car.dealership?.city,
+        dealershipState: car.dealership?.state,
+      });
+
+      const response = await vapiService.initiateCall({
+        customerPhone: user.phone,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        carMake: car.make,
+        carModel: car.model,
+        carYear: car.year.toString(),
+        carColor: car.exteriorColor,
+        financeOrLease: user.finance?.financeOrLease || user.preferences?.purchaseType || 'Finance',
+        carTrim: car.trim,
+        carPrice: car.dealerPrice,
+        carStockNumber: car.stockNumber,
+        dealershipName: car.dealership?.name,
+        dealershipCity: car.dealership?.city,
+        dealershipState: car.dealership?.state,
+      })
+
+      setCallStatus('Call initiated successfully!')
+      setShowPhoneInput(false)
+    } catch (error) {
+      setCallStatus(error instanceof Error ? error.message : 'Failed to initiate call')
+    } finally {
+      setIsCalling(false)
+    }
   }
 
 
@@ -311,10 +381,69 @@ export function CarDetailModal({ car, isOpen, onClose }: CarDetailModalProps) {
           </div>
 
 
+          {/* Phone Number Input */}
+          {showPhoneInput && (
+            <div className="space-y-4 pt-4 border-t border-gray-200">
+              <div className="space-y-2">
+                <label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">
+                  {!user?.phone ? 'Add your phone number to your profile' : 'Update your phone number'}
+                </label>
+                <input
+                  id="phoneNumber"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#EB0A1E] focus:border-transparent transition-all duration-200"
+                />
+                <p className="text-xs text-gray-500">
+                  {!user?.phone 
+                    ? 'Add your phone number to your profile to enable dealer calls. You can update it in your profile settings.'
+                    : 'Update your phone number in your profile to use this feature.'
+                  }
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    // Navigate to profile page to update phone number
+                    window.location.href = '/profile'
+                  }}
+                  className="flex-1 py-3 px-6 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25"
+                >
+                  Update Profile
+                </button>
+                <button
+                  onClick={() => setShowPhoneInput(false)}
+                  className="px-6 py-3 text-sm font-semibold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Call Status */}
+          {callStatus && (
+            <div className={`p-4 rounded-xl ${
+              callStatus.includes('successfully') 
+                ? 'bg-green-50 text-green-800 border border-green-200' 
+                : callStatus.includes('Please') || callStatus.includes('Failed')
+                ? 'bg-red-50 text-red-800 border border-red-200'
+                : 'bg-blue-50 text-blue-800 border border-blue-200'
+            }`}>
+              <p className="text-sm font-medium">{callStatus}</p>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-            <button className="flex-1 py-3 px-6 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25">
-              Contact Dealer
+            <button 
+              onClick={handleCallDealer}
+              disabled={isCalling}
+              className="flex-1 py-3 px-6 text-sm font-semibold text-white bg-[#EB0A1E] rounded-xl hover:bg-[#CF0A19] transition-all duration-200 hover:shadow-lg hover:shadow-[#EB0A1E]/25 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCalling ? 'Calling...' : 'Contact Dealer'}
             </button>
             <button className="flex-1 py-3 px-6 text-sm font-semibold text-white bg-gray-800 rounded-xl hover:bg-gray-900 transition-all duration-200 hover:shadow-lg">
               Get Financing
