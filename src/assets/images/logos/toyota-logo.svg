@@ -1,0 +1,19 @@
+<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red square with Toyota emblem -->
+  <rect x="0" y="0" width="32" height="32" fill="#E31937" rx="4"/>
+  
+  <!-- Toyota emblem (three overlapping ovals forming T shape) -->
+  <g fill="white">
+    <!-- Vertical oval -->
+    <ellipse cx="16" cy="16" rx="3" ry="8" transform="rotate(0 16 16)"/>
+    <!-- Top horizontal oval -->
+    <ellipse cx="16" cy="10" rx="8" ry="3" transform="rotate(0 16 10)"/>
+    <!-- Bottom horizontal oval -->
+    <ellipse cx="16" cy="22" rx="8" ry="3" transform="rotate(0 16 22)"/>
+  </g>
+  
+  <!-- TOYOTA text -->
+  <text x="40" y="22" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" stroke="white" stroke-width="0.5">
+    TOYOTA
+  </text>
+</svg>
