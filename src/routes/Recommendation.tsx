@@ -152,47 +152,45 @@ const RecommendationPage = () => {
       <Container>
         <div className="py-12">
           <div className="max-w-4xl mx-auto">
-            {/* User Selection */}
+            {/* User Profile */}
             <Card className="mb-8">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Your Profile</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        We'll use your profile data to find the perfect Toyota for you.
-                      </p>
-                      {user?.finance?.budgetRange && (
-                        <div className="bg-white rounded-lg p-3 border border-gray-200">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Your Budget Range</h4>
-                          <div className="flex items-center space-x-4 text-sm">
-                            <div>
-                              <span className="text-gray-500">Min:</span>
-                              <span className="font-semibold text-green-600 ml-1">
-                                ${user.finance.budgetRange.min.toLocaleString()}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Max:</span>
-                              <span className="font-semibold text-green-600 ml-1">
-                                ${user.finance.budgetRange.max.toLocaleString()}
-                              </span>
-                            </div>
-                          </div>
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-2">Welcome, {user?.firstName}!</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    We'll use your profile data to find the perfect Toyota for you.
+                  </p>
+                  {user?.finance?.budgetRange && (
+                    <div className="bg-white rounded-lg p-3 border border-gray-200">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Your Budget Range</h4>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <div>
+                          <span className="text-gray-500">Min:</span>
+                          <span className="font-semibold text-green-600 ml-1">
+                            ${user.finance.budgetRange.min.toLocaleString()}
+                          </span>
                         </div>
-                      )}
+                        <div>
+                          <span className="text-gray-500">Max:</span>
+                          <span className="font-semibold text-green-600 ml-1">
+                            ${user.finance.budgetRange.max.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-end">
-                    <Button 
-                      onClick={handleGetRecommendations}
-                      disabled={loading}
-                      className="w-full bg-[#EB0A1E] hover:bg-[#CF0A19] text-white"
-                    >
-                      {loading ? 'Getting Recommendations...' : 'Get My Recommendations'}
-                    </Button>
-                  </div>
+                  )}
+                </div>
+                
+                {/* Get Recommendations Button */}
+                <div className="text-center">
+                  <Button 
+                    onClick={handleGetRecommendations}
+                    disabled={loading}
+                    className="bg-[#EB0A1E] hover:bg-[#CF0A19] text-white px-8 py-3 text-lg"
+                  >
+                    {loading ? 'Getting Recommendations...' : 'Get My Recommendations'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
