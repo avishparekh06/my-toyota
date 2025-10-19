@@ -13,26 +13,48 @@ app.use(express.json());
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://avishparekh06_db_user:X71yGDwWHyvAVdFf@toyota.hwjvpxh.mongodb.net/MyToyota?retryWrites=true&w=majority&appName=toyota';
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  bufferCommands: false,
-});
+// Connect to MongoDB with error handling
+async function connectToMongoDB() {
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      bufferCommands: false,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
+      tlsAllowInvalidHostnames: false,
+    });
+    console.log('Connected to MongoDB successfully');
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    console.log('Server will continue running without database connection');
+    console.log('API endpoints that require database will return errors');
+  }
+}
+
+// Initialize database connection
+connectToMongoDB();
 
 const db = mongoose.connection;
 db.on('error', (error) => {
-  console.error('MongoDB connection error:', error);
+  console.error('MongoDB connection error:', error.message);
+  // Don't crash the server - continue running without database
 });
 db.on('connected', () => {
   console.log('Connected to MongoDB successfully');
 });
 db.on('disconnected', () => {
-  console.log('MongoDB disconnected');
+  console.log('MongoDB disconnected - server continues running');
 });
 db.once('open', () => {
   console.log('MongoDB connection opened');
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down gracefully...');
+  await mongoose.connection.close();
+  process.exit(0);
 });
 
 // Routes

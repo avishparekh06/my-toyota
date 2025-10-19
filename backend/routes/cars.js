@@ -1,10 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Car = require('../models/Car');
+
+// Helper function to check database connection
+const checkDatabaseConnection = (res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      error: 'Database connection unavailable',
+      message: 'The database is currently not connected. Please try again later.'
+    });
+  }
+  return null;
+};
 
 // GET /api/cars - Retrieve all cars with optional filtering
 router.get('/', async (req, res) => {
   try {
+    // Check database connection
+    const dbError = checkDatabaseConnection(res);
+    if (dbError) return;
     const { 
       make, 
       model, 
