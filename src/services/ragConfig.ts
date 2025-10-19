@@ -1,14 +1,15 @@
 // RAG Configuration for Toyota Recommendation System
 export const RAG_CONFIG = {
   // Gemini API Configuration
-  GEMINI_API_KEY: 'AIzaSyDsc03j2O0mMMyGHT8ZSWFeSzwY5lL4oCc',
+  GEMINI_API_KEY: (import.meta as any).env?.VITE_GEMINI_API_KEY || 'AIzaSyBR5m6S95FwfqnCzQvdkBArbrPqXVwFlpo',
   GEMINI_MODEL: 'gemini-1.5-flash',
   
   // Filtering Configuration
   FILTERS: {
-    MSRP_TOLERANCE: 0.1, // ±10% MSRP tolerance
-    BODY_STYLE_MATCH: true, // Must match body style preference
-    MIN_SIMILARITY_SCORE: 0.3, // Minimum similarity score for recommendations
+    MSRP_TOLERANCE: 0, // No MSRP filtering - show all cars
+    BODY_STYLE_MATCH: false, // Don't require exact body style match
+    MIN_SIMILARITY_SCORE: 0, // No minimum similarity threshold - show all cars
+    BUDGET_FILTER: true, // Only show cars within budget range
   },
   
   // Embedding Configuration
@@ -81,6 +82,12 @@ export interface RAGRecommendation {
   similarityScore: number;
   budgetFit: number;
   locationProximity: number;
+  semanticSimilarity: number;
+  breakdown: {
+    semantic: number;
+    budget: number;
+    location: number;
+  };
   explanation: string;
   reasons: string[];
 }

@@ -1,262 +1,262 @@
 [
   {
-    "vin": "JTEAAAAH1RJ000016",
-    "year": 2024,
+    "vin": "5TDXBRCH3RS000021",
+    "year": 2025,
     "make": "Toyota",
-    "model": "Crown",
-    "trim": "Platinum",
-    "bodyStyle": "Sedan",
-    "engine": "2.4L Turbo Hybrid",
-    "horsepower": 340,
+    "model": "RAV4 Hybrid",
+    "trim": "XSE",
+    "bodyStyle": "SUV",
+    "engine": "2.5L Hybrid I4",
+    "horsepower": 219,
     "drivetrain": "AWD",
-    "transmission": "CVT",
+    "transmission": "eCVT",
     "fuelType": "Hybrid",
-    "mpgCity": 29,
-    "mpgHighway": 32,
-    "exteriorColor": "Bronze Age",
-    "interiorColor": "Black Leather",
-    "stockNumber": "CRO-PLA-0016",
-    "msrp": 54600,
-    "dealerPrice": 53350,
+    "mpgCity": 41,
+    "mpgHighway": 38,
+    "exteriorColor": "Silver Sky Metallic",
+    "interiorColor": "Black SofTex",
+    "stockNumber": "RAV-XSE-0021",
+    "msrp": 37150,
+    "dealerPrice": 36200,
     "features": [
-      "Heated & Ventilated Seats",
-      "Head-Up Display",
-      "Panoramic Roof",
-      "11-Speaker JBL Audio",
-      "Advanced Park Assist"
-    ],
-    "dimensions": {
-      "length": "194.1 in",
-      "width": "72.4 in",
-      "height": "60.6 in",
-      "wheelbase": "112.2 in"
-    },
-    "status": "In Stock",
-    "images": [
-      "https://example.com/images/crown-platinum-front.jpg",
-      "https://example.com/images/crown-platinum-interior.jpg"
-    ],
-    "location": {
-      "city": "Los Angeles",
-      "state": "CA",
-      "zip": "90012"
-    },
-    "dealership": {
-      "name": "Toyota of Hollywood",
-      "address": "6000 Hollywood Blvd",
-      "city": "Los Angeles",
-      "state": "CA",
-      "zip": "90028",
-      "phone": "(323) 555-8765"
-    },
-    "dateAdded": "2025-10-18T12:34:00Z"
-  },
-  {
-    "vin": "5TDAAAB5RS000017",
-    "year": 2024,
-    "make": "Toyota",
-    "model": "Sequoia",
-    "trim": "Capstone",
-    "bodyStyle": "SUV",
-    "engine": "3.4L Twin-Turbo V6 Hybrid",
-    "horsepower": 437,
-    "drivetrain": "4WD",
-    "transmission": "10-speed automatic",
-    "fuelType": "Hybrid",
-    "mpgCity": 20,
-    "mpgHighway": 24,
-    "exteriorColor": "Supersonic Red",
-    "interiorColor": "White Semi-Aniline Leather",
-    "stockNumber": "SEQ-CAP-0017",
-    "msrp": 79900,
-    "dealerPrice": 78250,
-    "features": [
-      "Power-Deployable Running Boards",
-      "Heated and Ventilated Seats",
-      "Digital Rearview Mirror",
-      "14-Inch Touchscreen",
-      "Premium JBL Audio"
-    ],
-    "dimensions": {
-      "length": "208.1 in",
-      "width": "79.6 in",
-      "height": "74.5 in",
-      "wheelbase": "122.0 in"
-    },
-    "status": "In Stock",
-    "images": [
-      "https://example.com/images/sequoia-capstone-front.jpg",
-      "https://example.com/images/sequoia-capstone-interior.jpg"
-    ],
-    "location": {
-      "city": "Houston",
-      "state": "TX",
-      "zip": "77007"
-    },
-    "dealership": {
-      "name": "Toyota of Katy",
-      "address": "21555 Katy Fwy",
-      "city": "Katy",
-      "state": "TX",
-      "zip": "77450",
-      "phone": "(281) 555-4400"
-    },
-    "dateAdded": "2025-10-18T12:34:00Z"
-  },
-  {
-    "vin": "JTJFAECA0P9000018",
-    "year": 2023,
-    "make": "Toyota",
-    "model": "GR Supra",
-    "trim": "3.0 Premium",
-    "bodyStyle": "Coupe",
-    "engine": "3.0L Turbo I6",
-    "horsepower": 382,
-    "drivetrain": "RWD",
-    "transmission": "8-speed automatic",
-    "fuelType": "Gasoline",
-    "mpgCity": 23,
-    "mpgHighway": 31,
-    "exteriorColor": "Nitro Yellow",
-    "interiorColor": "Black Alcantara",
-    "stockNumber": "SUP-30P-0018",
-    "msrp": 56500,
-    "dealerPrice": 55300,
-    "features": [
-      "Adaptive Variable Suspension",
-      "Brembo Brakes",
-      "Heads-Up Display",
-      "Wireless CarPlay",
-      "Sport Seats"
-    ],
-    "dimensions": {
-      "length": "172.5 in",
-      "width": "73.0 in",
-      "height": "50.9 in",
-      "wheelbase": "97.2 in"
-    },
-    "status": "In Stock",
-    "images": [
-      "https://example.com/images/grsupra-premium-front.jpg",
-      "https://example.com/images/grsupra-premium-interior.jpg"
-    ],
-    "location": {
-      "city": "Miami",
-      "state": "FL",
-      "zip": "33130"
-    },
-    "dealership": {
-      "name": "Toyota of North Miami",
-      "address": "16600 NW 2nd Ave",
-      "city": "Miami",
-      "state": "FL",
-      "zip": "33169",
-      "phone": "(305) 555-2244"
-    },
-    "dateAdded": "2025-10-18T12:34:00Z"
-  },
-  {
-    "vin": "JT8BH45G2R9000019",
-    "year": 2024,
-    "make": "Toyota",
-    "model": "GR86",
-    "trim": "Premium",
-    "bodyStyle": "Coupe",
-    "engine": "2.4L H4",
-    "horsepower": 228,
-    "drivetrain": "RWD",
-    "transmission": "6-speed manual",
-    "fuelType": "Gasoline",
-    "mpgCity": 20,
-    "mpgHighway": 27,
-    "exteriorColor": "Neptune Blue",
-    "interiorColor": "Black/Red Cloth",
-    "stockNumber": "GR8-PRE-0019",
-    "msrp": 31100,
-    "dealerPrice": 30400,
-    "features": [
-      "Heated Front Seats",
-      "Torsen Limited-Slip Differential",
-      "8-Inch Touchscreen",
       "Apple CarPlay & Android Auto",
-      "Performance Tires"
+      "Wireless Charging Pad",
+      "Heated Front Seats",
+      "Power Moonroof",
+      "Toyota Safety Sense 3.0"
     ],
     "dimensions": {
-      "length": "167.9 in",
-      "width": "69.9 in",
-      "height": "51.6 in",
-      "wheelbase": "101.4 in"
+      "length": "180.9 in",
+      "width": "73.0 in",
+      "height": "67.0 in",
+      "wheelbase": "105.9 in"
     },
     "status": "In Stock",
     "images": [
-      "https://example.com/images/gr86-premium-front.jpg",
-      "https://example.com/images/gr86-premium-interior.jpg"
+      "https://example.com/images/rav4-hybrid-xse-front.jpg",
+      "https://example.com/images/rav4-hybrid-xse-interior.jpg"
     ],
     "location": {
-      "city": "Atlanta",
-      "state": "GA",
-      "zip": "30308"
+      "city": "Denver",
+      "state": "CO",
+      "zip": "80202"
     },
     "dealership": {
-      "name": "World Toyota",
-      "address": "5800 Peachtree Blvd",
-      "city": "Atlanta",
-      "state": "GA",
-      "zip": "30341",
-      "phone": "(770) 555-7070"
+      "name": "Mountain States Toyota",
+      "address": "201 W 70th Ave",
+      "city": "Denver",
+      "state": "CO",
+      "zip": "80221",
+      "phone": "(303) 555-9042"
     },
-    "dateAdded": "2025-10-18T12:34:00Z"
+    "dateAdded": "2025-10-18T13:00:00Z"
   },
   {
-    "vin": "5TDJX4GN6P9000020",
-    "year": 2023,
+    "vin": "4T1BF1FK5RU000022",
+    "year": 2025,
     "make": "Toyota",
-    "model": "Highlander",
+    "model": "Camry",
     "trim": "XLE",
-    "bodyStyle": "SUV",
-    "engine": "2.4L Turbo I4",
-    "horsepower": 265,
+    "bodyStyle": "Sedan",
+    "engine": "2.5L I4",
+    "horsepower": 203,
     "drivetrain": "FWD",
     "transmission": "8-speed automatic",
     "fuelType": "Gasoline",
-    "mpgCity": 22,
-    "mpgHighway": 29,
-    "exteriorColor": "Blueprint",
-    "interiorColor": "Gray SofTex",
-    "stockNumber": "HIG-XLE-0020",
-    "msrp": 41950,
-    "dealerPrice": 40800,
+    "mpgCity": 28,
+    "mpgHighway": 39,
+    "exteriorColor": "Midnight Black Metallic",
+    "interiorColor": "Ash Leather",
+    "stockNumber": "CAM-XLE-0022",
+    "msrp": 31600,
+    "dealerPrice": 30800,
     "features": [
-      "Power Liftgate",
-      "Wireless Charging",
+      "Adaptive Cruise Control",
+      "Dual-Zone Climate Control",
+      "Blind Spot Monitoring",
       "Heated Front Seats",
-      "Second-Row Captain's Chairs",
-      "Toyota Safety Sense 2.5+"
+      "9-Inch Touchscreen Display"
     ],
     "dimensions": {
-      "length": "194.9 in",
-      "width": "76.0 in",
-      "height": "68.1 in",
+      "length": "192.1 in",
+      "width": "72.4 in",
+      "height": "56.9 in",
+      "wheelbase": "111.2 in"
+    },
+    "status": "In Stock",
+    "images": [
+      "https://example.com/images/camry-xle-front.jpg",
+      "https://example.com/images/camry-xle-interior.jpg"
+    ],
+    "location": {
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98101"
+    },
+    "dealership": {
+      "name": "Toyota of Seattle",
+      "address": "1925 Airport Way S",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98134",
+      "phone": "(206) 555-3920"
+    },
+    "dateAdded": "2025-10-18T13:00:00Z"
+  },
+  {
+    "vin": "JTNKHMBX6R1000023",
+    "year": 2025,
+    "make": "Toyota",
+    "model": "Corolla Cross",
+    "trim": "XLE AWD",
+    "bodyStyle": "Crossover",
+    "engine": "2.0L I4",
+    "horsepower": 169,
+    "drivetrain": "AWD",
+    "transmission": "CVT",
+    "fuelType": "Gasoline",
+    "mpgCity": 29,
+    "mpgHighway": 32,
+    "exteriorColor": "Wind Chill Pearl",
+    "interiorColor": "Light Gray Fabric",
+    "stockNumber": "COR-XLE-0023",
+    "msrp": 29600,
+    "dealerPrice": 28800,
+    "features": [
+      "Heated Front Seats",
+      "Power Liftgate",
+      "Blind Spot Monitor",
+      "Wireless CarPlay",
+      "Rear Cross-Traffic Alert"
+    ],
+    "dimensions": {
+      "length": "175.6 in",
+      "width": "71.9 in",
+      "height": "64.8 in",
+      "wheelbase": "103.9 in"
+    },
+    "status": "In Stock",
+    "images": [
+      "https://example.com/images/corolla-cross-xle-front.jpg",
+      "https://example.com/images/corolla-cross-xle-interior.jpg"
+    ],
+    "location": {
+      "city": "Phoenix",
+      "state": "AZ",
+      "zip": "85004"
+    },
+    "dealership": {
+      "name": "Camelback Toyota",
+      "address": "1550 E Camelback Rd",
+      "city": "Phoenix",
+      "state": "AZ",
+      "zip": "85014",
+      "phone": "(602) 555-7281"
+    },
+    "dateAdded": "2025-10-18T13:00:00Z"
+  },
+  {
+    "vin": "JTDAAAAA7RA000024",
+    "year": 2025,
+    "make": "Toyota",
+    "model": "Tacoma",
+    "trim": "TRD Off-Road",
+    "bodyStyle": "Truck",
+    "engine": "2.4L Turbo I4",
+    "horsepower": 278,
+    "drivetrain": "4WD",
+    "transmission": "8-speed automatic",
+    "fuelType": "Gasoline",
+    "mpgCity": 20,
+    "mpgHighway": 25,
+    "exteriorColor": "Solar Octane",
+    "interiorColor": "Black Fabric",
+    "stockNumber": "TAC-TRD-0024",
+    "msrp": 42250,
+    "dealerPrice": 41200,
+    "features": [
+      "Crawl Control",
+      "Multi-Terrain Select",
+      "Locking Rear Differential",
+      "LED Headlights",
+      "Apple CarPlay & Android Auto"
+    ],
+    "dimensions": {
+      "length": "212.3 in",
+      "width": "74.4 in",
+      "height": "70.6 in",
+      "wheelbase": "127.4 in"
+    },
+    "status": "In Stock",
+    "images": [
+      "https://example.com/images/tacoma-trd-offroad-front.jpg",
+      "https://example.com/images/tacoma-trd-offroad-interior.jpg"
+    ],
+    "location": {
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75204"
+    },
+    "dealership": {
+      "name": "Cowboy Toyota",
+      "address": "9525 E R L Thornton Fwy",
+      "city": "Dallas",
+      "state": "TX",
+      "zip": "75228",
+      "phone": "(214) 555-6611"
+    },
+    "dateAdded": "2025-10-18T13:00:00Z"
+  },
+  {
+    "vin": "JTMRWRFV8RD000025",
+    "year": 2025,
+    "make": "Toyota",
+    "model": "bZ4X",
+    "trim": "Limited AWD",
+    "bodyStyle": "SUV",
+    "engine": "Dual Electric Motors",
+    "horsepower": 214,
+    "drivetrain": "AWD",
+    "transmission": "Single-Speed",
+    "fuelType": "Electric",
+    "mpgCity": 112,
+    "mpgHighway": 92,
+    "exteriorColor": "Heavy Metal",
+    "interiorColor": "SofTex Black",
+    "stockNumber": "BZ4-LIM-0025",
+    "msrp": 52400,
+    "dealerPrice": 50950,
+    "features": [
+      "Panoramic Glass Roof",
+      "Heated Steering Wheel",
+      "Digital Rearview Mirror",
+      "12.3-Inch Touchscreen",
+      "360-Degree Camera"
+    ],
+    "dimensions": {
+      "length": "184.6 in",
+      "width": "73.2 in",
+      "height": "65.0 in",
       "wheelbase": "112.2 in"
     },
     "status": "In Stock",
     "images": [
-      "https://example.com/images/highlander-xle-front.jpg",
-      "https://example.com/images/highlander-xle-interior.jpg"
+      "https://example.com/images/bz4x-limited-front.jpg",
+      "https://example.com/images/bz4x-limited-interior.jpg"
     ],
     "location": {
-      "city": "Charlotte",
-      "state": "NC",
-      "zip": "28208"
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94103"
     },
     "dealership": {
-      "name": "Toyota of North Charlotte",
-      "address": "13429 Statesville Rd",
-      "city": "Huntersville",
-      "state": "NC",
-      "zip": "28078",
-      "phone": "(704) 555-8181"
+      "name": "Toyota of San Francisco",
+      "address": "1701 Van Ness Ave",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94109",
+      "phone": "(415) 555-3141"
     },
-    "dateAdded": "2025-10-18T12:34:00Z"
+    "dateAdded": "2025-10-18T13:00:00Z"
   }
 ]

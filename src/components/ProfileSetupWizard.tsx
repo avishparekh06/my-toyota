@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check, User, DollarSign, Car, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { authApi, User as UserType } from '@/services/api';
+import { authApi } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BudgetRangeSlider from './BudgetRangeSlider';
 
 interface ProfileSetupWizardProps {
   onComplete: () => void;
@@ -42,7 +43,7 @@ const steps = [
 ];
 
 const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -51,9 +52,11 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
   const [personalData, setPersonalData] = useState({
     familyInfo: '',
     avgCommuteDistance: '',
-    location: '',
-    featurePreferences: '',
-    buildPreferences: '',
+    city: '',
+    state: '',
+    zip: '',
+    featurePreferences: [] as string[],
+    buildPreferences: [] as string[],
     modelPreferences: '',
     fuelType: '',
     color: '',
@@ -67,7 +70,9 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
     creditScore: '',
     financeOrLease: '',
     employmentStatus: '',
-    financingPriorities: ''
+    financingPriorities: '',
+    budgetRangeMin: 25000,
+    budgetRangeMax: 75000
   });
 
   // Initialize form with existing user data
@@ -76,9 +81,11 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
       setPersonalData({
         familyInfo: user.personal?.familyInfo?.toString() || '',
         avgCommuteDistance: user.personal?.avgCommuteDistance?.toString() || '',
-        location: user.personal?.location || '',
-        featurePreferences: user.personal?.featurePreferences?.[0] || '',
-        buildPreferences: user.personal?.buildPreferences?.[0] || '',
+        city: user.location?.city || '',
+        state: user.location?.state || '',
+        zip: user.location?.zip || '',
+        featurePreferences: user.personal?.featurePreferences || [],
+        buildPreferences: user.personal?.buildPreferences || [],
         modelPreferences: user.personal?.modelPreferences?.join(', ') || '',
         fuelType: user.personal?.fuelType || '',
         color: user.personal?.color || '',
@@ -96,7 +103,9 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
         creditScore: user.finance?.creditScore?.toString() || '',
         financeOrLease: user.finance?.financeOrLease || '',
         employmentStatus: user.finance?.employmentStatus || '',
-        financingPriorities: user.finance?.financingPriorities?.[0] || ''
+        financingPriorities: user.finance?.financingPriorities?.[0] || '',
+        budgetRangeMin: user.finance?.budgetRange?.min || 25000,
+        budgetRangeMax: user.finance?.budgetRange?.max || 75000
       });
     }
   }, [user]);
@@ -117,6 +126,14 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
     } else {
       setFinanceData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleBudgetRangeChange = (minValue: number, maxValue: number) => {
+    setFinanceData(prev => ({
+      ...prev,
+      budgetRangeMin: minValue,
+      budgetRangeMax: maxValue
+    }));
   };
 
   const parseArrayField = (value: string): string[] => {
@@ -140,9 +157,8 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
       const personalUpdate = {
         familyInfo: parseNumberField(personalData.familyInfo),
         avgCommuteDistance: parseNumberField(personalData.avgCommuteDistance),
-        location: personalData.location || undefined,
-        featurePreferences: personalData.featurePreferences ? [personalData.featurePreferences] : undefined,
-        buildPreferences: personalData.buildPreferences ? [personalData.buildPreferences] : undefined,
+        featurePreferences: personalData.featurePreferences.length > 0 ? personalData.featurePreferences : undefined,
+        buildPreferences: personalData.buildPreferences.length > 0 ? personalData.buildPreferences : undefined,
         modelPreferences: parseArrayField(personalData.modelPreferences),
         fuelType: personalData.fuelType as 'EV' | 'Gas' | 'Hybrid' | undefined,
         color: personalData.color || undefined,
@@ -150,12 +166,22 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
         buyingFor: personalData.buyingFor || undefined
       };
 
+      const locationUpdate = {
+        city: personalData.city || undefined,
+        state: personalData.state || undefined,
+        zip: personalData.zip || undefined
+      };
+
       const financeUpdate = {
         householdIncome: parseNumberField(financeData.householdIncome),
         creditScore: parseNumberField(financeData.creditScore),
         financeOrLease: financeData.financeOrLease as 'Finance' | 'Lease' | undefined,
         employmentStatus: financeData.employmentStatus as 'Employed' | 'Self-Employed' | 'Unemployed' | 'Retired' | 'Student' | undefined,
-        financingPriorities: financeData.financingPriorities ? [financeData.financingPriorities] : undefined
+        financingPriorities: financeData.financingPriorities ? [financeData.financingPriorities] : undefined,
+        budgetRange: {
+          min: financeData.budgetRangeMin,
+          max: financeData.budgetRangeMax
+        }
       };
 
       const cleanPersonalUpdate = Object.fromEntries(
@@ -164,12 +190,18 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
       const cleanFinanceUpdate = Object.fromEntries(
         Object.entries(financeUpdate).filter(([_, value]) => value !== undefined)
       );
+      const cleanLocationUpdate = Object.fromEntries(
+        Object.entries(locationUpdate).filter(([_, value]) => value !== undefined)
+      );
 
       await authApi.updateUserData(user._id, {
         personal: cleanPersonalUpdate,
-        finance: cleanFinanceUpdate
+        finance: cleanFinanceUpdate,
+        location: cleanLocationUpdate
       });
 
+      // Refresh user data to get the latest information
+      await refreshUser();
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred';
@@ -235,19 +267,49 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
                 />
               </div>
 
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-[var(--text)] mb-1">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={personalData.location}
-                  onChange={handlePersonalChange}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
-                  placeholder="e.g., San Francisco, CA or New York, NY"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-[var(--text)] mb-1">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={personalData.city}
+                    onChange={handlePersonalChange}
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                    placeholder="e.g., San Francisco"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-[var(--text)] mb-1">
+                    State
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={personalData.state}
+                    onChange={handlePersonalChange}
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                    placeholder="e.g., CA"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="zip" className="block text-sm font-medium text-[var(--text)] mb-1">
+                    ZIP Code
+                  </label>
+                  <input
+                    type="text"
+                    id="zip"
+                    name="zip"
+                    value={personalData.zip}
+                    onChange={handlePersonalChange}
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                    placeholder="e.g., 94102"
+                  />
+                </div>
               </div>
 
               <div>
@@ -405,6 +467,22 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
                 </select>
               </div>
             </div>
+
+            {/* Budget Range Slider */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-[var(--text)] mb-3">
+                Budget Range
+              </label>
+              <BudgetRangeSlider
+                minValue={financeData.budgetRangeMin}
+                maxValue={financeData.budgetRangeMax}
+                min={15000}
+                max={100000}
+                step={1000}
+                onChange={handleBudgetRangeChange}
+                className="mt-4"
+              />
+            </div>
           </div>
         );
 
@@ -505,9 +583,33 @@ const ProfileSetupWizard: React.FC<ProfileSetupWizardProps> = ({ onComplete }) =
             </motion.div>
             <div>
               <h3 className="text-2xl font-bold text-[var(--text)] mb-2">Welcome to MyToyota!</h3>
-              <p className="text-[var(--muted)]">
+              <p className="text-[var(--muted)] mb-4">
                 Your profile is now complete. We'll use this information to find the perfect Toyota for you.
               </p>
+              
+              {/* Budget Range Summary */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 max-w-md mx-auto">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Your Budget Range</h4>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Minimum</p>
+                    <p className="text-lg font-bold text-green-600">
+                      ${financeData.budgetRangeMin.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Maximum</p>
+                    <p className="text-lg font-bold text-green-600">
+                      ${financeData.budgetRangeMax.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-500">
+                    Range: ${(financeData.budgetRangeMax - financeData.budgetRangeMin).toLocaleString()}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         );

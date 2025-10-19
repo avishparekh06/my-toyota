@@ -1,5 +1,6 @@
 // Simplified recommendation engine
-import { mockUsers, mockCars } from './mockData.js';
+import { mockUsers } from './mockData.js';
+import { carsApi } from '../services/api.js';
 
 /**
  * Calculate compatibility score between user and car
@@ -29,9 +30,8 @@ const calculateScore = (user, car) => {
   // Budget match (20% weight)
   if (car.dealerPrice >= user.budget.min && car.dealerPrice <= user.budget.max) {
     score += 20;
-  } else if (car.dealerPrice < user.budget.min) {
-    score += 10; // Partial credit for under budget
   }
+  // No points for cars outside budget range
   factors += 20;
 
   return factors > 0 ? (score / factors) : 0;
@@ -41,17 +41,29 @@ const calculateScore = (user, car) => {
  * Generate recommendations for a user
  */
 export const getRecommendations = async (userId, limit = 5) => {
-  console.log('Getting recommendations for user:', userId);
+  // Getting recommendations for user
   
   const user = mockUsers.find(u => u._id === userId || u.id === userId);
   if (!user) {
     throw new Error(`User with ID ${userId} not found`);
   }
 
-  console.log('Found user:', user.name);
+  // Found user
+
+  // Fetch real car data from the database
+  const carsResponse = await carsApi.getCars({ 
+    limit: 1000, // Get all cars
+    status: 'In Stock' // Only get available cars
+  });
+  
+  if (!carsResponse.success || !carsResponse.data) {
+    throw new Error('Failed to fetch car data from database');
+  }
+  
+  const realCars = carsResponse.data;
 
   // Calculate scores for all cars
-  const carScores = mockCars.map(car => ({
+  const carScores = realCars.map(car => ({
     car: `${car.year} ${car.make} ${car.model} ${car.trim}`,
     carData: car, // Include full car data
     score: calculateScore(user, car),
@@ -64,7 +76,7 @@ export const getRecommendations = async (userId, limit = 5) => {
     .slice(0, limit)
     .filter(rec => rec.score > 0.1); // Only include cars with >10% match
 
-  console.log('Generated recommendations:', recommendations.length);
+  // Generated recommendations
   return recommendations;
 };
 
@@ -110,7 +122,7 @@ export const getAllUserRecommendations = async (limit = 3) => {
       const recommendations = await getRecommendations(user._id, limit);
       results[user._id] = recommendations;
     } catch (error) {
-      console.error(`Error getting recommendations for ${user._id}:`, error);
+      // Error getting recommendations
       results[user._id] = [];
     }
   }

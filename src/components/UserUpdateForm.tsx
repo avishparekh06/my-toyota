@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { authApi, User } from '@/services/api';
+import { authApi } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BudgetRangeSlider from './BudgetRangeSlider';
 
 interface UserUpdateFormProps {
   onSuccess?: () => void;
@@ -11,7 +12,7 @@ interface UserUpdateFormProps {
 }
 
 const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -19,9 +20,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
   const [personalData, setPersonalData] = useState({
     familyInfo: '',
     avgCommuteDistance: '',
-    location: '',
-    featurePreferences: '',
-    buildPreferences: '',
+    city: '',
+    state: '',
+    zip: '',
+    featurePreferences: [] as string[],
+    buildPreferences: [] as string[],
     modelPreferences: '',
     fuelType: '',
     color: '',
@@ -35,7 +38,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
     creditScore: '',
     financeOrLease: '',
     employmentStatus: '',
-    financingPriorities: ''
+    financingPriorities: '',
+    budgetRangeMin: 25000,
+    budgetRangeMax: 75000
   });
 
   // Initialize form with existing user data
@@ -45,7 +50,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
       setPersonalData({
         familyInfo: user.personal?.familyInfo?.toString() || '',
         avgCommuteDistance: user.personal?.avgCommuteDistance?.toString() || '',
-        location: user.personal?.location || '',
+        city: user.location?.city || '',
+        state: user.location?.state || '',
+        zip: user.location?.zip || '',
         featurePreferences: user.personal?.featurePreferences || [],
         buildPreferences: user.personal?.buildPreferences || [],
         modelPreferences: user.personal?.modelPreferences?.join(', ') || '',
@@ -66,7 +73,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
         creditScore: user.finance?.creditScore?.toString() || '',
         financeOrLease: user.finance?.financeOrLease || '',
         employmentStatus: user.finance?.employmentStatus || '',
-        financingPriorities: user.finance?.financingPriorities?.[0] || ''
+        financingPriorities: user.finance?.financingPriorities?.[0] || '',
+        budgetRangeMin: user.finance?.budgetRange?.min || 25000,
+        budgetRangeMax: user.finance?.budgetRange?.max || 75000
       });
     }
   }, [user]);
@@ -87,6 +96,14 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
     } else {
       setFinanceData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleBudgetRangeChange = (minValue: number, maxValue: number) => {
+    setFinanceData(prev => ({
+      ...prev,
+      budgetRangeMin: minValue,
+      budgetRangeMax: maxValue
+    }));
   };
 
   const parseArrayField = (value: string): string[] => {
@@ -112,9 +129,8 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
       const personalUpdate = {
         familyInfo: parseNumberField(personalData.familyInfo),
         avgCommuteDistance: parseNumberField(personalData.avgCommuteDistance),
-        location: personalData.location || undefined,
-        featurePreferences: Array.isArray(personalData.featurePreferences) ? personalData.featurePreferences : undefined,
-        buildPreferences: Array.isArray(personalData.buildPreferences) ? personalData.buildPreferences : undefined,
+        featurePreferences: personalData.featurePreferences.length > 0 ? personalData.featurePreferences : undefined,
+        buildPreferences: personalData.buildPreferences.length > 0 ? personalData.buildPreferences : undefined,
         modelPreferences: parseArrayField(personalData.modelPreferences),
         fuelType: personalData.fuelType as 'EV' | 'Gas' | 'Hybrid' | undefined,
         color: personalData.color || undefined,
@@ -122,12 +138,22 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
         buyingFor: personalData.buyingFor || undefined
       };
 
+      const locationUpdate = {
+        city: personalData.city || undefined,
+        state: personalData.state || undefined,
+        zip: personalData.zip || undefined
+      };
+
       const financeUpdate = {
         householdIncome: parseNumberField(financeData.householdIncome),
         creditScore: parseNumberField(financeData.creditScore),
         financeOrLease: financeData.financeOrLease as 'Finance' | 'Lease' | undefined,
         employmentStatus: financeData.employmentStatus as 'Employed' | 'Self-Employed' | 'Unemployed' | 'Retired' | 'Student' | undefined,
-        financingPriorities: financeData.financingPriorities ? [financeData.financingPriorities] : undefined
+        financingPriorities: financeData.financingPriorities ? [financeData.financingPriorities] : undefined,
+        budgetRange: {
+          min: financeData.budgetRangeMin,
+          max: financeData.budgetRangeMax
+        }
       };
 
       // Remove undefined values
@@ -137,14 +163,20 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
       const cleanFinanceUpdate = Object.fromEntries(
         Object.entries(financeUpdate).filter(([_, value]) => value !== undefined)
       );
+      const cleanLocationUpdate = Object.fromEntries(
+        Object.entries(locationUpdate).filter(([_, value]) => value !== undefined)
+      );
 
       const response = await authApi.updateUserData(user._id, {
         personal: cleanPersonalUpdate,
-        finance: cleanFinanceUpdate
+        finance: cleanFinanceUpdate,
+        location: cleanLocationUpdate
       });
 
       if (response.success) {
         setMessage({ type: 'success', text: 'User data updated successfully!' });
+        // Refresh user data to get the latest information
+        await refreshUser();
         onSuccess?.();
       } else {
         throw new Error('Failed to update user data');
@@ -232,19 +264,49 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
               />
             </div>
 
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium text-[var(--text)] mb-1">
-                Location
-              </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={personalData.location}
-                onChange={handlePersonalChange}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-[var(--text)] mb-1">
+                  City
+                </label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  value={personalData.city}
+                  onChange={handlePersonalChange}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
-                placeholder="e.g., San Francisco, CA or New York, NY"
-              />
+                  placeholder="e.g., San Francisco"
+                />
+              </div>
+              <div>
+                <label htmlFor="state" className="block text-sm font-medium text-[var(--text)] mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  value={personalData.state}
+                  onChange={handlePersonalChange}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                  placeholder="e.g., CA"
+                />
+              </div>
+              <div>
+                <label htmlFor="zip" className="block text-sm font-medium text-[var(--text)] mb-1">
+                  ZIP Code
+                </label>
+                <input
+                  type="text"
+                  id="zip"
+                  name="zip"
+                  value={personalData.zip}
+                  onChange={handlePersonalChange}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] bg-[var(--card)] text-[var(--text)]"
+                  placeholder="e.g., 94102"
+                />
+              </div>
             </div>
 
             <div>
@@ -481,6 +543,47 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ onSuccess, onError }) =
                 <option value="Low interest rates">Low interest rates</option>
                 <option value="Short financing period">Short financing period</option>
               </select>
+            </div>
+
+            {/* Budget Range Slider */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-[var(--text)] mb-3">
+                Budget Range
+              </label>
+              
+              {/* Current Budget Range Display */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Current Budget Range</h4>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Minimum</p>
+                    <p className="text-lg font-bold text-green-600">
+                      ${financeData.budgetRangeMin.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">Maximum</p>
+                    <p className="text-lg font-bold text-green-600">
+                      ${financeData.budgetRangeMax.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-500">
+                    Range: ${(financeData.budgetRangeMax - financeData.budgetRangeMin).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              
+              <BudgetRangeSlider
+                minValue={financeData.budgetRangeMin}
+                maxValue={financeData.budgetRangeMax}
+                min={15000}
+                max={100000}
+                step={1000}
+                onChange={handleBudgetRangeChange}
+                className="mt-4"
+              />
             </div>
           </div>
                 </motion.div>

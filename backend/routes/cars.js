@@ -243,4 +243,142 @@ router.get('/search/:query', async (req, res) => {
   }
 });
 
+// GET /api/cars/embeddings - Get all car embeddings for RAG system
+router.get('/embeddings', async (req, res) => {
+  try {
+    const cars = await Car.find({ 
+      'embedding.vector': { $exists: true, $ne: [] },
+      status: 'In Stock'
+    }).select('_id embedding msrp location');
+
+    const embeddings = cars.map(car => car.getEmbedding()).filter(embedding => embedding !== null);
+
+    res.json({
+      success: true,
+      data: embeddings,
+      count: embeddings.length
+    });
+  } catch (error) {
+    console.error('Error fetching car embeddings:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch car embeddings',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/cars/:id/generate-embedding - Generate embedding for a specific car
+router.post('/:id/generate-embedding', async (req, res) => {
+  try {
+    const car = await Car.findById(req.params.id);
+    
+    if (!car) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Car not found' 
+      });
+    }
+
+    // This would typically call the embedding service
+    // For now, we'll mark it as needing regeneration
+    car.embedding = {
+      vector: [],
+      featureText: '',
+      generatedAt: new Date(),
+      model: 'gemini-1.5-flash'
+    };
+    
+    await car.save();
+
+    res.json({
+      success: true,
+      message: 'Embedding generation queued',
+      carId: car._id
+    });
+  } catch (error) {
+    console.error('Error generating embedding:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to generate embedding',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/cars/regenerate-embeddings - Regenerate embeddings for all cars
+router.post('/regenerate-embeddings', async (req, res) => {
+  try {
+    const cars = await Car.find({ status: 'In Stock' });
+    let processed = 0;
+    let needsRegeneration = 0;
+
+    for (const car of cars) {
+      if (car.needsEmbeddingRegeneration()) {
+        car.embedding = {
+          vector: [],
+          featureText: '',
+          generatedAt: new Date(),
+          model: 'gemini-1.5-flash'
+        };
+        await car.save();
+        needsRegeneration++;
+      }
+      processed++;
+    }
+
+    res.json({
+      success: true,
+      message: 'Embedding regeneration queued',
+      processed,
+      needsRegeneration,
+      total: cars.length
+    });
+  } catch (error) {
+    console.error('Error regenerating embeddings:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to regenerate embeddings',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/cars/embedding-status - Get embedding status for all cars
+router.get('/embedding-status', async (req, res) => {
+  try {
+    const totalCars = await Car.countDocuments({ status: 'In Stock' });
+    const carsWithEmbeddings = await Car.countDocuments({ 
+      'embedding.vector': { $exists: true, $ne: [] },
+      status: 'In Stock'
+    });
+    const carsNeedingRegeneration = await Car.countDocuments({
+      status: 'In Stock',
+      $or: [
+        { 'embedding.vector': { $exists: false } },
+        { 'embedding.vector': { $size: 0 } },
+        { 'embedding.generatedAt': { $exists: false } },
+        { 'embedding.generatedAt': { $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }
+      ]
+    });
+
+    res.json({
+      success: true,
+      data: {
+        totalCars,
+        carsWithEmbeddings,
+        carsNeedingRegeneration,
+        embeddingCoverage: totalCars > 0 ? Math.round((carsWithEmbeddings / totalCars) * 100) : 0
+      }
+    });
+  } catch (error) {
+    console.error('Error getting embedding status:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to get embedding status',
+      message: error.message 
+    });
+  }
+});
+
 module.exports = router;

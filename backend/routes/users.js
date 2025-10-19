@@ -452,4 +452,100 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/users/embeddings - Get all user embeddings for RAG system
+router.get('/embeddings', authenticateToken, async (req, res) => {
+  try {
+    const users = await User.find({ 
+      'embedding.vector': { $exists: true, $ne: [] }
+    }).select('_id embedding finance location');
+
+    const embeddings = users.map(user => user.getEmbedding()).filter(embedding => embedding !== null);
+
+    res.json({
+      success: true,
+      data: embeddings,
+      count: embeddings.length
+    });
+  } catch (error) {
+    console.error('Error fetching user embeddings:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch user embeddings',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/users/:id/generate-embedding - Generate embedding for a specific user
+router.post('/:id/generate-embedding', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'User not found' 
+      });
+    }
+
+    // Mark embedding as needing regeneration
+    user.embedding = {
+      vector: [],
+      profileText: '',
+      generatedAt: new Date(),
+      model: 'gemini-1.5-flash'
+    };
+    
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'User embedding generation queued',
+      userId: user._id
+    });
+  } catch (error) {
+    console.error('Error generating user embedding:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to generate user embedding',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/users/embedding-status - Get embedding status for all users
+router.get('/embedding-status', authenticateToken, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const usersWithEmbeddings = await User.countDocuments({ 
+      'embedding.vector': { $exists: true, $ne: [] }
+    });
+    const usersNeedingRegeneration = await User.countDocuments({
+      $or: [
+        { 'embedding.vector': { $exists: false } },
+        { 'embedding.vector': { $size: 0 } },
+        { 'embedding.generatedAt': { $exists: false } },
+        { 'embedding.generatedAt': { $lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }
+      ]
+    });
+
+    res.json({
+      success: true,
+      data: {
+        totalUsers,
+        usersWithEmbeddings,
+        usersNeedingRegeneration,
+        embeddingCoverage: totalUsers > 0 ? Math.round((usersWithEmbeddings / totalUsers) * 100) : 0
+      }
+    });
+  } catch (error) {
+    console.error('Error getting user embedding status:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to get user embedding status',
+      message: error.message 
+    });
+  }
+});
+
 module.exports = router;

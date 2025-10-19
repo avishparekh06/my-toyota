@@ -1,5 +1,5 @@
 // Authenticated recommendation engine that uses real user data
-import { mockCars } from './mockCars.js';
+import { carsApi } from '../services/api.js';
 import { 
   calculateOverallScore, 
   sortCarsByScore, 
@@ -18,18 +18,36 @@ const transformUserData = (user) => {
   const preferences = user.preferences || {};
   
   // Build budget from available financial data
-  const budget = {
-    min: preferences.monthlyBudget ? preferences.monthlyBudget * 12 * 2 : 25000, // 2 years of monthly budget
-    max: preferences.monthlyBudget ? preferences.monthlyBudget * 12 * 5 : 75000, // 5 years of monthly budget
-    preferred: preferences.monthlyBudget ? preferences.monthlyBudget * 12 * 3 : 45000 // 3 years of monthly budget
+  let budget = {
+    min: 25000,
+    max: 75000,
+    preferred: 45000
   };
 
-  // If we have annual income, use it to calculate budget
-  if (finance.householdIncome || user.annualIncome) {
-    const income = finance.householdIncome || user.annualIncome;
-    budget.min = Math.max(budget.min, income * 0.3); // At least 30% of income
-    budget.max = Math.min(budget.max, income * 0.8); // At most 80% of income
-    budget.preferred = income * 0.5; // 50% of income as preferred
+  // Use budgetRange from finance profile if available
+  if (finance.budgetRange && finance.budgetRange.min && finance.budgetRange.max) {
+    budget = {
+      min: finance.budgetRange.min,
+      max: finance.budgetRange.max,
+      preferred: (finance.budgetRange.min + finance.budgetRange.max) / 2 // Use midpoint as preferred
+    };
+  } else {
+    // Fallback to calculating from monthly budget or income
+    if (preferences.monthlyBudget) {
+      budget = {
+        min: preferences.monthlyBudget * 12 * 2, // 2 years of monthly budget
+        max: preferences.monthlyBudget * 12 * 5, // 5 years of monthly budget
+        preferred: preferences.monthlyBudget * 12 * 3 // 3 years of monthly budget
+      };
+    }
+
+    // If we have annual income, use it to calculate budget
+    if (finance.householdIncome || user.annualIncome) {
+      const income = finance.householdIncome || user.annualIncome;
+      budget.min = Math.max(budget.min, income * 0.3); // At least 30% of income
+      budget.max = Math.min(budget.max, income * 0.8); // At most 80% of income
+      budget.preferred = income * 0.5; // 50% of income as preferred
+    }
   }
 
   // Build preferences object from personal data
@@ -107,7 +125,7 @@ const transformUserData = (user) => {
  * @param {number} minScore - Minimum score threshold for recommendations (default: 20)
  * @returns {Object} Recommendation results with top cars and scoring details
  */
-export const getAuthenticatedRecommendations = (user, limit = 5, minScore = 20) => {
+export const getAuthenticatedRecommendations = async (user, limit = 5, minScore = 20) => {
   if (!user) {
     throw new Error('User must be authenticated to get recommendations');
   }
@@ -116,7 +134,8 @@ export const getAuthenticatedRecommendations = (user, limit = 5, minScore = 20) 
   const transformedUser = transformUserData(user);
   
   // Debug logging to help understand the transformation
-  console.log('🔍 User data transformation:', {
+  // User data transformation
+  console.log('User data transformation:', {
     originalUser: {
       personal: user.personal,
       finance: user.finance,
@@ -130,9 +149,21 @@ export const getAuthenticatedRecommendations = (user, limit = 5, minScore = 20) 
       lifestyle: transformedUser.lifestyle
     }
   });
+
+  // Fetch real car data from the database
+  const carsResponse = await carsApi.getCars({ 
+    limit: 1000, // Get all cars
+    status: 'In Stock' // Only get available cars
+  });
+  
+  if (!carsResponse.success || !carsResponse.data) {
+    throw new Error('Failed to fetch car data from database');
+  }
+  
+  const realCars = carsResponse.data;
   
   // Calculate scores for all cars
-  const carsWithScores = mockCars.map(car => {
+  const carsWithScores = realCars.map(car => {
     const score = calculateOverallScore(car, transformedUser);
     return {
       car: car,
@@ -186,7 +217,7 @@ export const getAuthenticatedRecommendations = (user, limit = 5, minScore = 20) 
       reasons: generateRecommendationReasons(item.car, transformedUser, item.score.breakdown)
     })),
     statistics: stats,
-    totalCarsAnalyzed: mockCars.length,
+    totalCarsAnalyzed: realCars.length,
     carsFiltered: carsWithScores.length - filteredCars.length,
     recommendationsReturned: topRecommendations.length
   };

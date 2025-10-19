@@ -5,11 +5,31 @@ import { UserEmbedding, CarEmbedding, RAGRecommendation } from './ragConfig';
  * Calculate cosine similarity between two embedding vectors
  */
 function calculateCosineSimilarity(embedding1: number[], embedding2: number[]): number {
-  const similarity = cosineSimilarity(embedding1, embedding2);
+  // Ensure embeddings are valid
+  if (!embedding1 || !embedding2 || embedding1.length === 0 || embedding2.length === 0) {
+    // Invalid embeddings provided to cosine similarity calculation
+    return 0;
+  }
+
+  // Ensure embeddings have the same length
+  const minLength = Math.min(embedding1.length, embedding2.length);
+  const emb1 = embedding1.slice(0, minLength);
+  const emb2 = embedding2.slice(0, minLength);
+
+  const similarity = cosineSimilarity(emb1, emb2);
   
-  // For binary feature vectors, cosine similarity can be negative
+  // For feature vectors, cosine similarity can be negative
   // Normalize to 0-1 range for better interpretation
-  return Math.max(0, similarity);
+  const normalizedSimilarity = Math.max(0, similarity);
+  
+  // Add some minimum similarity to prevent 0% scores
+  // This ensures that even dissimilar items get a small score
+  const minSimilarity = 0.2; // Increased from 0.1 to 0.2 for better scores
+  const finalSimilarity = Math.max(normalizedSimilarity, minSimilarity);
+  
+  // Cosine similarity calculation completed
+  
+  return finalSimilarity;
 }
 
 /**
@@ -18,42 +38,55 @@ function calculateCosineSimilarity(embedding1: number[], embedding2: number[]): 
 function calculateBudgetFit(userBudget: { min: number; max: number }, carMsrp: number): number {
   const { min, max } = userBudget;
   
+  // Debug logging
+  console.log('Budget fit calculation:', {
+    userBudget: { min, max },
+    carMsrp,
+    budgetValid: !!(min && max && min > 0 && max > 0),
+    carInRange: carMsrp >= min && carMsrp <= max
+  });
+  
+  // Ensure we have valid budget values
+  if (!min || !max || min <= 0 || max <= 0) {
+    // Invalid budget values provided
+    console.log('Invalid budget values - returning 0');
+    return 0.0; // No score for invalid budget
+  }
+  
   // Perfect fit within budget
   if (carMsrp >= min && carMsrp <= max) {
+    console.log('Car fits budget - returning 1.0');
     return 1.0;
   }
   
-  // Under budget (still good, but not optimal)
-  if (carMsrp < min) {
-    const ratio = carMsrp / min;
-    return Math.max(0.7, ratio); // Minimum 70% score for under budget
-  }
-  
-  // Over budget (penalize but don't eliminate)
-  if (carMsrp > max) {
-    const ratio = max / carMsrp;
-    return Math.max(0.3, ratio); // Minimum 30% score for over budget
-  }
-  
-  return 0;
+  // Outside budget range - return 0 score
+  console.log('Car outside budget range - returning 0.0');
+  return 0.0;
 }
 
 /**
  * Calculate location proximity score
  */
 function calculateLocationProximity(userLocation: { city: string; state: string }, carLocation: { city: string; state: string }): number {
+  // Ensure we have valid location data
+  if (!userLocation || !carLocation || !userLocation.city || !carLocation.city) {
+    // Invalid location data provided
+    return 0.5; // Default moderate score
+  }
+  
   // Same city - perfect match
-  if (userLocation.city === carLocation.city && userLocation.state === carLocation.state) {
+  if (userLocation.city.toLowerCase() === carLocation.city.toLowerCase() && 
+      userLocation.state.toLowerCase() === carLocation.state.toLowerCase()) {
     return 1.0;
   }
   
   // Same state - good match
-  if (userLocation.state === carLocation.state) {
-    return 0.7;
+  if (userLocation.state.toLowerCase() === carLocation.state.toLowerCase()) {
+    return 0.8; // Increased from 0.7
   }
   
-  // Different state - lower score
-  return 0.3;
+  // Different state - lower score but not zero
+  return 0.5; // Increased from 0.3
 }
 
 /**
@@ -64,14 +97,19 @@ function passesInitialFilters(
   car: any,
   filters: { MSRP_TOLERANCE: number; BODY_STYLE_MATCH: boolean }
 ): boolean {
-  // MSRP tolerance filter (±10%)
-  if (filters.MSRP_TOLERANCE > 0) {
+  // Checking filters for car
+  
+  // MSRP tolerance filter
+  if (filters.MSRP_TOLERANCE > 0 && user.budget) {
     const userBudgetCenter = (user.budget.min + user.budget.max) / 2;
     const tolerance = userBudgetCenter * filters.MSRP_TOLERANCE;
     const minAcceptable = userBudgetCenter - tolerance;
     const maxAcceptable = userBudgetCenter + tolerance;
     
+    // Budget filter check
+    
     if (car.msrp < minAcceptable || car.msrp > maxAcceptable) {
+      // Car failed budget filter
       return false;
     }
   }
@@ -79,11 +117,15 @@ function passesInitialFilters(
   // Body style preference filter
   if (filters.BODY_STYLE_MATCH && user.preferences?.bodyStyle) {
     const preferredBodyStyles = user.preferences.bodyStyle;
+    // Body style filter check
+    
     if (!preferredBodyStyles.includes(car.bodyStyle)) {
+      // Car failed body style filter
       return false;
     }
   }
   
+  // Car passed all initial filters
   return true;
 }
 
@@ -116,7 +158,11 @@ function calculateComprehensiveScore(
     (locationScore * weights.locationProximity);
   
   // Normalize to ensure score is between 0 and 1
-  return Math.min(1.0, Math.max(0.0, weightedScore));
+  const finalScore = Math.min(1.0, Math.max(0.0, weightedScore));
+  
+  // Comprehensive score calculation completed
+  
+  return finalScore;
 }
 
 /**
@@ -137,23 +183,35 @@ export class SimilarityService {
   ): Promise<RAGRecommendation[]> {
     const recommendations: RAGRecommendation[] = [];
     
-    // Filter cars based on initial criteria
-    const filteredCars = cars.filter(car => 
-      passesInitialFilters(user, car, filters)
-    );
+    // Starting findSimilarCars
+    console.log('Budget filtering debug:', {
+      budgetFilterEnabled: filters.BUDGET_FILTER,
+      userBudget: userEmbedding.budget,
+      totalCars: cars.length,
+      sampleCarPrices: cars.slice(0, 3).map(c => ({ name: `${c.year} ${c.make} ${c.model}`, price: c.dealerPrice }))
+    });
     
-    // Get embeddings for filtered cars
-    const filteredCarEmbeddings = carEmbeddings.filter(embedding =>
-      filteredCars.some(car => car._id === embedding.carId || car.id === embedding.carId)
-    );
+    // Show ALL cars - no filtering
+    const filteredCars = cars; // Use all cars instead of filtering
+    const filteredCarEmbeddings = carEmbeddings; // Use all embeddings
+    
+    // Showing all cars (no filtering applied)
+    // Using all car embeddings
     
     // Calculate similarity scores for each car
+    // Processing car embeddings for similarity calculation
+    
     for (const carEmbedding of filteredCarEmbeddings) {
       const car = filteredCars.find(c => 
         (c._id === carEmbedding.carId) || (c.id === carEmbedding.carId)
       );
       
-      if (!car) continue;
+      if (!car) {
+        // Car not found for embedding ID
+        continue;
+      }
+      
+      // Processing car
       
       const similarityScore = calculateComprehensiveScore(
         userEmbedding,
@@ -161,28 +219,50 @@ export class SimilarityService {
         weights
       );
       
-      const budgetFit = calculateBudgetFit(userEmbedding.budget, carEmbedding.msrp);
+      const budgetFit = calculateBudgetFit(userEmbedding.budget, car.dealerPrice || car.msrp);
       const locationProximity = calculateLocationProximity(userEmbedding.location, carEmbedding.location);
       
-      // Only include cars above minimum similarity threshold
-      if (similarityScore >= filters.MIN_SIMILARITY_SCORE) {
-        recommendations.push({
-          car: `${car.year} ${car.make} ${car.model} ${car.trim}`,
-          carData: car,
-          similarityScore,
-          budgetFit,
-          locationProximity,
-          explanation: '', // Will be filled by LLM service
-          reasons: [] // Will be filled by LLM service
-        });
+      // Car similarity calculated
+      
+      // Check if car fits budget (if budget filtering is enabled)
+      if (filters.BUDGET_FILTER && budgetFit === 0) {
+        // Skip cars that don't fit budget
+        console.log(`Skipping car ${car.year} ${car.make} ${car.model} - Budget fit: ${budgetFit}, Car price: $${car.dealerPrice || car.msrp}, User budget: $${userEmbedding.budget.min}-$${userEmbedding.budget.max}`);
+        continue;
       }
+      
+      // Calculate detailed breakdown
+      const semanticSimilarity = calculateCosineSimilarity(userEmbedding.embedding, carEmbedding.embedding);
+      const breakdown = {
+        semantic: semanticSimilarity * (weights.userPreferences + weights.carFeatures),
+        budget: budgetFit * weights.budgetFit,
+        location: locationProximity * weights.locationProximity
+      };
+
+      recommendations.push({
+        car: `${car.year} ${car.make} ${car.model} ${car.trim}`,
+        carData: car,
+        similarityScore,
+        budgetFit,
+        locationProximity,
+        semanticSimilarity,
+        breakdown,
+        explanation: '', // Will be filled by LLM service
+        reasons: [] // Will be filled by LLM service
+      });
     }
     
     // Sort by similarity score (highest first)
     recommendations.sort((a, b) => b.similarityScore - a.similarityScore);
     
+    // Final recommendations calculated
+    console.log(`Found ${recommendations.length} recommendations before filtering`);
+    
     // Return top recommendations
-    return recommendations.slice(0, maxResults);
+    const finalResults = recommendations.slice(0, maxResults);
+    console.log(`Returning ${finalResults.length} final recommendations`);
+    
+    return finalResults;
   }
   
   /**
